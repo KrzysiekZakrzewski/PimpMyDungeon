@@ -12,5 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a17adf3ed0f61146a9f39d24d184dc8, type: 3}
   m_Name: 2x2
   m_EditorClassIdentifier: 
-  <Tile>k__BackingField: {fileID: 11400000, guid: 1a6599b4e6e43704fb7a46a1d4044825, type: 2}
-  <Size>k__BackingField: {x: 2, y: 2}
+  <Sprite>k__BackingField: {fileID: -2978260595890351725, guid: 9161861448c35484db631a62cfce63c4, type: 3}
+  <ItemPoints>k__BackingField:
+  - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  - {x: 1, y: 1}
+  <Prefab>k__BackingField: {fileID: 6658270817828319880, guid: 8bb9540b472fc894ba8e83dd45bbf0cd, type: 3}

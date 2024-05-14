@@ -171,3 +171,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3347773e57a2c243958c599f6ee48ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  putScale: {x: 1.1, y: 1.1, z: 1.1}

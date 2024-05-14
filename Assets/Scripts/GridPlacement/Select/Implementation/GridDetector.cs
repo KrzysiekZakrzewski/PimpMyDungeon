@@ -1,6 +1,7 @@
 using GridPlacement;
 using MouseInteraction.Manager;
 using UnityEngine;
+using Zenject;
 
 namespace MouseInteraction.Implementation
 {
@@ -9,17 +10,14 @@ namespace MouseInteraction.Implementation
         [SerializeField]
         private Grid grid;
 
-        [SerializeField]
+        private PlacementSystem placementSystem;
         private MouseManager mouseManager;
 
-        [SerializeField]
-        private PlacementSystem placementSystem;
-
-        private PreviewSystem previewSystem;
-
-        private void Awake()
+        [Inject]
+        private void Inject(PlacementSystem placementSystem, MouseManager mouseManager)
         {
-            previewSystem = placementSystem.PreviewSystem;
+            this.placementSystem = placementSystem;
+            this.mouseManager = mouseManager;
         }
 
         protected override void MouseObject_MouseDown(IMouseDown callback)
@@ -33,7 +31,9 @@ namespace MouseInteraction.Implementation
 
             var gridPosition = grid.WorldToCell(hit.point);
 
-            previewSystem.MovePreview(gridPosition);
+            Vector2Int gridPosition2D = new (gridPosition.x, gridPosition.y);
+
+            //placementSystem.OnPlaceItem(gridPosition2D);
         }
 
         protected override void MouseObject_MouseUp(IMouseDown callback)

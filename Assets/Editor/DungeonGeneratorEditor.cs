@@ -56,6 +56,8 @@ namespace Generator
 
             var path = $"{DestinationPath}{textField}.asset";
 
+            levelDataObject.SetupName(textField);
+
             AssetDatabase.CreateAsset(levelDataObject, path);
             AssetDatabase.SaveAssets();
 

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GridPlacement;
+using UnityEngine;
 
 namespace Item
 {
@@ -8,6 +9,10 @@ namespace Item
         Sprite Sprite { get; }
         Vector2 Size { get; }
 
-        void Setup(ItemData data);
+        void Setup(ItemData data, PlacementSystem placementSystem);
+
+        void OnPlaced();
+
+        void OnExit();
     }
 }

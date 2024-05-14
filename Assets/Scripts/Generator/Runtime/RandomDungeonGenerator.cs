@@ -24,7 +24,7 @@ namespace Generator
 
             var emptyPosition = new HashSet<Vector2Int>(floorPositions);
 
-            ItemPlacementHalper itemPlacer = new ItemPlacementHalper(
+            ItemPlacementHalper itemPlacer = new(
                 emptyPosition,
                 itemVisualizer,
                 levelGeneratorData.PlaceItem, 
@@ -36,13 +36,13 @@ namespace Generator
 
             Vector2 centerPoint = tilemapVisualizer.GetCenterPoint();
 
-            return LevelDataSO.CreateInstance(name, floorPositions, centerPoint, obstacles, placeableItems);
+            return LevelDataSO.CreateInstance(floorPositions, centerPoint, obstacles, placeableItems);
         }
 
         protected HashSet<Vector2Int> RunRandomWalk(SimpleLevelGeneratorData parameters, Vector2Int position)
         {
             var currentPosition = position;
-            HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
+            HashSet<Vector2Int> floorPositions = new();
             for (int i = 0; i < parameters.Iterations; i++)
             {
                 var path = ProceduralGenerationAlgorithms.SimpleRandomWalk(currentPosition, parameters.WalkLength);

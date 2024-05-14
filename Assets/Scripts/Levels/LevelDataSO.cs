@@ -1,4 +1,5 @@
-﻿using Item;
+﻿using Generator;
+using Item;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,40 +12,44 @@ namespace Levels.Data
         [field: SerializeField]
         public string Name { private set; get; }
 
-        [field: SerializeField]
+        [field: SerializeField, HideInInspector]
         public List<Vector2Int> FloorPositions { private set; get; }
-
-        [field: SerializeField]
-        public SerializedDictionary<Vector2Int, ObstacleItemData> Obstacles { private set; get; }
-
-        [field: SerializeField]
-        public SerializedDictionary<Vector2, PlaceItemData> PlaceableItems { private set; get; }
 
         [field: SerializeField]
         public Vector2 CenterPoint { private set; get; }
 
-        public void Init(string name,
+        [field: SerializeField, HideInInspector]
+        public SerializedDictionary<Vector2Int, ObstacleItemData> Obstacles { private set; get; }
+
+        [field: SerializeField, HideInInspector]
+        public List<ItemGeneratedData> PlaceableItems { private set; get; }
+
+        public void Init(
             HashSet<Vector2Int> floorPositions,
             Vector2 centerPoint,
             Dictionary<Vector2Int, ObstacleItemData> obstacles,
-            Dictionary<Vector2, PlaceItemData> placeableItem)
+            List<ItemGeneratedData> placeableItem)
         {
-            Name = name;
             CenterPoint = centerPoint;
             FloorPositions = floorPositions.ToList();
             Obstacles = obstacles;
             PlaceableItems = placeableItem;
         }
 
-        public static LevelDataSO CreateInstance(string name,
+        public static LevelDataSO CreateInstance(
             HashSet<Vector2Int> floorPositions,
             Vector2 centerPoint,
             Dictionary<Vector2Int, ObstacleItemData> obstacles, 
-            Dictionary<Vector2, PlaceItemData> placeableItem)
+            List<ItemGeneratedData> placeableItem)
         {
             var data = CreateInstance<LevelDataSO>();
-            data.Init(name, floorPositions, centerPoint, obstacles, placeableItem);
+            data.Init(floorPositions, centerPoint, obstacles, placeableItem);
             return data;
+        }
+
+        public void SetupName(string name)
+        {
+            Name = name;
         }
     }
 }

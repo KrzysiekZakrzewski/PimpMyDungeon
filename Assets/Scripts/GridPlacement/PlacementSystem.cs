@@ -1,36 +1,67 @@
+using GridPlacement.PlaceState;
+using Inputs;
 using Item;
+using System;
 using UnityEngine;
 
 namespace GridPlacement
 {
     public class PlacementSystem : MonoBehaviour
     {
-        [field: SerializeField]
-        public PreviewSystem PreviewSystem { private set; get; }
+        [SerializeField]
+        private PreviewSystem previewSystem;
 
-        public static PlacementSystem Instance;
+        private GridData gridData;
+        private IPlacementState placeState;
 
-        private void Awake()
-        {
-            Instance = this;
-        }
+        private event Action OnPlaced;
 
         public void SetupGridData(GridData gridData)
         {
-            PreviewSystem.SetupGridData(gridData);
+            this.gridData = gridData;
         }
 
         public void StartPlacement(ItemBase item)
         {
-            if (item == null)
-                return;
+            StopPlacement();
 
-            PreviewSystem.StartShow(item);
+            placeState = new PlacementState(gridData, item);
+
+            //ADD Rotation Evenet
         }
 
         public void StopPlacement()
         {
-            PreviewSystem.StopShow();
+            if (placeState == null)
+                return;
+
+            placeState.EndState();
+
+            placeState = null;
+        }
+
+        public void OnPlaceItem(Vector2Int gridPosition)
+        {
+            if (placeState == null)
+                return;
+
+            if (!placeState.OnAction(gridPosition))
+            {
+                Debug.Log("Wrong place!!!");
+                return;
+            }
+
+            OnPlaced?.Invoke();
+        }
+
+        public void AddPlacementEvent(Action onPlaced, Action onExit)
+        {
+            OnPlaced += onPlaced;
+        }
+
+        public void RemovePlacementEvent(Action onPlaced, Action onExit)
+        {
+            OnPlaced -= onPlaced;
         }
     }
 }

@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Sprite>k__BackingField: {fileID: 1369372634922183146, guid: a0d3fbbc155eb404a87f827b40a48dfe, type: 3}
   <Size>k__BackingField: {x: 1, y: 1}
+  <ItemPoints>k__BackingField:
+  - {x: 0, y: 0}
   <Prefab>k__BackingField: {fileID: 6658270817828319880, guid: 77755354569893c4e84e6b6af5b6430e, type: 3}

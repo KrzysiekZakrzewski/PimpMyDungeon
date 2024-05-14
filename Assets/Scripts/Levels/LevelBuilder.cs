@@ -2,7 +2,6 @@
 using Generator.Data;
 using GridPlacement;
 using Item;
-using Item.Obstacle;
 using Levels.Data;
 using System;
 using System.Collections;
@@ -10,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
+using Zenject;
 
 namespace Generator
 {
@@ -28,11 +27,24 @@ namespace Generator
         [SerializeField]
         private Transform obstacleMagazine, itemMagazine;
 
+        private readonly float extraBound = 0.2f;
+        private readonly float baseWaitBuilder = 0.2f;
+        private float waitBuilder = 0.1f;
+
+        private bool skiped;
+
         private HashSet<Vector2Int> floorInHash;
         private HashSet<Vector2Int> obstaclesInHash;
         private List<Bounds> objectsBounds;
         private Camera currentCamera;
         private GridData gridData;
+        private PlacementSystem placementSystem;
+
+        [Inject]
+        private void Inject(PlacementSystem placementSystem)
+        {
+            this.placementSystem = placementSystem;
+        }
 
         private void Awake()
         {
@@ -42,13 +54,15 @@ namespace Generator
             objectsBounds.Clear();
 
             Vector3 cameraPosition = 
-                new Vector3(levelDataSO.CenterPoint.x, 
+                new(levelDataSO.CenterPoint.x, 
                 levelDataSO.CenterPoint.y,
                 currentCamera.transform.position.z);
 
             currentCamera.transform.position = cameraPosition;
 
             StartCoroutine(BuildlevelSequence());
+
+            Skip();
         }
 
         private void PaintSingleBasicWall(Vector2Int position, string binaryType)
@@ -143,9 +157,9 @@ namespace Generator
         {
             bool succesfull = false;
 
-            Vector3Int offSetSize = new Vector3Int(size.x, size.y);
+            Vector3Int offSetSize = new(size.x, size.y);
 
-            Bounds levelBounds = new Bounds(wallTilemap.cellBounds.center, wallTilemap.cellBounds.size + offSetSize);
+            Bounds levelBounds = new(wallTilemap.cellBounds.center, wallTilemap.cellBounds.size + offSetSize);
 
             Vector2 position = Vector2.zero;
 
@@ -158,7 +172,7 @@ namespace Generator
                 succesfull = !inLevelBounds && !IsOccupiedPosition(position);
             }
 
-            Bounds objectBound = new Bounds(position, new Vector3(size.x, size.y, 0));
+            Bounds objectBound = new(position, new Vector3(size.x + extraBound, size.y + extraBound, 0));
 
             objectsBounds.Add(objectBound);
 
@@ -178,10 +192,22 @@ namespace Generator
             wallTilemap.ClearAllTiles();
         }
 
+        private void Skip()
+        {
+            if (skiped)
+                return;
+
+            skiped = true;
+
+            waitBuilder = 0f;
+        }
+
         #region Sequences
         private IEnumerator BuildlevelSequence()
         {
             floorInHash = new HashSet<Vector2Int>(levelDataSO.FloorPositions);
+
+            waitBuilder = baseWaitBuilder;
 
             Clear();
 
@@ -193,8 +219,7 @@ namespace Generator
             yield return StartCoroutine(SpawnPlaceableItem());
 
             gridData = new GridData(floorInHash, obstaclesInHash);
-
-            PlacementSystem.Instance.SetupGridData(gridData);
+            placementSystem.SetupGridData(gridData);
         }
 
         private IEnumerator PaintFloor()
@@ -231,7 +256,9 @@ namespace Generator
                 }
                 PaintSingleCornerWall(position, neighboursBinaryType);
 
-                yield return new WaitForSeconds(0.1f);
+                
+
+                yield return new WaitForSeconds(waitBuilder);
             }
         }
 
@@ -254,7 +281,7 @@ namespace Generator
                 }
                 PaintSingleBasicWall(position, neighboursBinaryType);
 
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(waitBuilder);
             }
         }
 
@@ -264,7 +291,9 @@ namespace Generator
             {
                 PaintSingleTile(tilemap, tile, position);
 
-                yield return new WaitForSeconds(0.1f);
+
+
+                yield return new WaitForSeconds(waitBuilder);
             }
         }
 
@@ -285,37 +314,34 @@ namespace Generator
 
                 Vector3 spawnPosition = new Vector3(arrayOfAllKeys[i].x, arrayOfAllKeys[i].y) + offSet;
 
-                var newObject = Instantiate(obstacleData.Prefab, spawnPosition, Quaternion.identity, obstacleMagazine);
+                Instantiate(obstacleData.Prefab, spawnPosition, Quaternion.identity, obstacleMagazine);
 
-                for (int x = 0; x < obstacleData.Size.x; x++)
+                for (int j = 0; j < obstacleData.ItemPoints.Count; j++)
                 {
-                    for (int y = 0; y < obstacleData.Size.y; y++)
-                    {
-                        obstaclesInHash.Add(arrayOfAllKeys[i] + new Vector2Int(x, y));
-                    }
+                    obstaclesInHash.Add(arrayOfAllKeys[i] + obstacleData.ItemPoints[j]);
                 }
 
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(waitBuilder);
             }
         }
 
         private IEnumerator SpawnPlaceableItem()
         {
-            Vector3Int levelResize = new Vector3Int(wallTilemap.cellBounds.size.x / 2, 0);
+            Vector3Int levelResize = new(wallTilemap.cellBounds.size.x / 2, 0);
 
-            Bounds objectsArea = new Bounds(wallTilemap.cellBounds.center, wallTilemap.cellBounds.size + levelResize);
+            Bounds objectsArea = new(wallTilemap.cellBounds.center, wallTilemap.cellBounds.size + levelResize);
 
             foreach (var item in levelDataSO.PlaceableItems)
             {
-                var position = CalculatePositionForItem(objectsArea, item.Value.Size);
+                var position = CalculatePositionForItem(objectsArea, item.PlaceItemData.Size);
 
-                var newObject = Instantiate(item.Value.Prefab, position, Quaternion.identity, itemMagazine);
+                var newObject = Instantiate(item.PlaceItemData.Prefab, position, Quaternion.identity, itemMagazine);
 
                 var newItem = newObject.GetComponent<ItemBase>();
 
-                newItem.Setup(item.Value);
+                newItem.Setup(item.PlaceItemData, placementSystem);
 
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(waitBuilder);
             }
 
             ResizeCamera(objectsArea);

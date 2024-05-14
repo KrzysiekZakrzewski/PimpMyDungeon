@@ -1,8 +1,10 @@
 using Generator.Item;
 using Item;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Generator
 {
@@ -30,63 +32,83 @@ namespace Generator
             SortItems(itemGeneratorData);
         }
 
-        private (bool, List<Vector2Int>) PlaceBigItem(Vector2Int originPosition, Vector2Int size)
+        private (bool, List<Vector2Int>) PlaceBigItem(Vector2Int originPosition, List<Vector2Int> itemPoints, int rotationId)
         {
-            List<Vector2Int> positions = new List<Vector2Int>() { originPosition };
+            List<Vector2Int> positions = new();
 
-            for (int row = 0; row < size.x; row++)
+            for (int i = 0; i < itemPoints.Count; i++)
             {
-                for (int col = 0; col < size.y; col++)
-                {
-                    if (col == 0 && row == 0)
-                        continue;
+                Vector2Int newPosToCheck
+                        = originPosition + CalculateRotation(itemPoints[i], rotationId);
 
-                    Vector2Int newPosToCheck
-                        = new Vector2Int(originPosition.x + row, originPosition.y + col);
+                if (!emptyTiles.Contains(newPosToCheck))
+                    return (false, positions);
 
-                    if (!emptyTiles.Contains(newPosToCheck))
-                        return (false, positions);
-
-                    positions.Add(newPosToCheck);
-                }
+                positions.Add(newPosToCheck);
             }
 
             return (true, positions);
         }
 
-        private (bool, Vector2Int, List<Vector2Int>) GetItemPosition(Vector2Int size)
+        private (bool, ItemGeneratedData, List<Vector2Int>) GetItemPosition(List<Vector2Int> itemPoints, bool useRotation)
         {
-            var potentialPositions = GetPotentialItemPositions(size);
+            var potentialPositions = GetPotentialItemPositions(itemPoints, useRotation);
 
-            var originPosition = Vector2Int.zero;
+            var itemPotentialPosition = new ItemGeneratedData();
             var occupedPosition = new List<Vector2Int>();
 
             if (potentialPositions.Count == 0)
-                return (false, originPosition, occupedPosition);
+                return (false, itemPotentialPosition, occupedPosition);
 
             var id = Random.Range(0, potentialPositions.Count);
 
-            originPosition = potentialPositions.Keys.ElementAt(id);
+            itemPotentialPosition = potentialPositions.Keys.ElementAt(id);
             occupedPosition = potentialPositions.Values.ElementAt(id);
 
-            return (true, originPosition, occupedPosition);
+            return (true, itemPotentialPosition, occupedPosition);
         }
 
-        private Dictionary<Vector2Int, List<Vector2Int>> GetPotentialItemPositions(Vector2Int size)
+        private Dictionary<ItemGeneratedData, List<Vector2Int>> GetPotentialItemPositions(List<Vector2Int> itemPoints, bool useRotation)
         {
-            Dictionary<Vector2Int, List<Vector2Int>> potentialPositions = new Dictionary<Vector2Int, List<Vector2Int>>();
+            Dictionary<ItemGeneratedData, List<Vector2Int>> potentialPositions = new();
 
             foreach (var tile in emptyTiles)
             {
-                var (result, placementPositions) = PlaceBigItem(tile, size);
+                int rotationIteration = itemPoints.Count > 1 ? 3 : 1;
+
+                int rotationID = useRotation ? Random.Range(0, 4) : 0;
+
+                var (result, placementPositions) = PlaceBigItem(tile, itemPoints, rotationID);
 
                 if (!result)
                     continue;
 
-                potentialPositions.Add(tile, placementPositions);
+                potentialPositions.Add(new ItemGeneratedData(rotationID, tile), placementPositions);
             }
 
             return potentialPositions;
+        }
+
+        private Vector2Int CalculateRotation(Vector2Int point, int rotationID)
+        {
+            Vector2Int newPoint = point;
+
+            switch (rotationID)
+            {
+                case 0:
+                    break;
+                case 1:
+                    newPoint = new Vector2Int(point.y, -point.x);
+                    break;
+                case 2:
+                    newPoint = new Vector2Int(-point.x, -point.y);
+                    break;
+                case 3:
+                    newPoint = new Vector2Int(-point.y, point.x);
+                    break;
+            }
+
+            return newPoint;
         }
 
         private void SortItems(List<ItemLevelGeneratorData> itemGeneratorData)
@@ -105,15 +127,15 @@ namespace Generator
             currentItem = placeableItemToGenerate.Count == 0 ? null : placeableItemToGenerate.Dequeue();
         }
 
-        public Dictionary<Vector2, PlaceItemData> GeneratePlacableItems()
+        public List<ItemGeneratedData> GeneratePlacableItems()
         {
-            Dictionary<Vector2, PlaceItemData> generatedItems = new Dictionary<Vector2, PlaceItemData>();
+            List<ItemGeneratedData> generatedItems = new();
 
             GetNextPlaceableItem();
 
             while (currentItem != null)
             {
-                var (result, originPosition, ocupedPosition) = GetItemPosition(currentItem.ItemData.Size);
+                var (result, generatedData, ocupedPosition) = GetItemPosition(currentItem.ItemData.ItemPoints, true);
 
                 if (!result)
                 {
@@ -123,9 +145,12 @@ namespace Generator
 
                 currentItemAmount++;
 
-                var spawnedPosition = itemVisualizer.SpawnPlaceableItem(originPosition, currentItem.ItemData);
+                var spawnedPosition = itemVisualizer.SpawnPlaceableItem(generatedData, currentItem.ItemData);
 
-                generatedItems.Add(spawnedPosition, currentItem.ItemData);
+                generatedData.SetSpawnPosition(spawnedPosition);
+                generatedData.SetPlaceableItemData(currentItem.ItemData);
+
+                generatedItems.Add(generatedData);
 
                 for (int i = 0; i < ocupedPosition.Count; i++)
                 {
@@ -141,19 +166,21 @@ namespace Generator
 
         public Dictionary<Vector2Int, ObstacleItemData> GenerateObstacles()
         {
-            Dictionary<Vector2Int, ObstacleItemData> generatedObstacles = new Dictionary<Vector2Int, ObstacleItemData>();
+            Dictionary<Vector2Int, ObstacleItemData> generatedObstacles = new();
 
             ObstacleItemData currentObstacleItem = obstacles.Dequeue();
 
             while (emptyTiles.Count > 0)
             {
-                var (result, originPosition, ocupedPosition) = GetItemPosition(currentObstacleItem.Size);
+                var (result, itemPositionData, ocupedPosition) = GetItemPosition(currentObstacleItem.ItemPoints, false);
 
                 if (!result)
                 {
                     currentObstacleItem = obstacles.Dequeue();
                     continue;
                 }
+
+                var originPosition = itemPositionData.OriginPosition;
 
                 itemVisualizer.SpawnObstacle(originPosition, currentObstacleItem);
 
@@ -166,6 +193,43 @@ namespace Generator
             }
 
             return generatedObstacles;
+        }
+    }
+
+    [Serializable]
+    public class ItemGeneratedData
+    {
+        [field: SerializeField]
+        public int RotationID { private set; get; }
+        [field: SerializeField]
+        public Vector2Int OriginPosition { private set; get; }
+        [field: SerializeField]
+        public Vector2 SpawnPosition { private set; get; }
+        [field: SerializeField]
+        public PlaceItemData PlaceItemData { private set; get; }
+
+        public ItemGeneratedData()
+        {
+            RotationID = 0;
+            OriginPosition = Vector2Int.zero;
+            SpawnPosition = Vector2.zero;
+        }
+
+        public ItemGeneratedData(int rotationID, Vector2Int originPosition)
+        {
+            RotationID = rotationID;
+            OriginPosition = originPosition;
+            SpawnPosition = Vector2.zero;
+        }
+
+        public void SetSpawnPosition(Vector2 spawnPosition)
+        {
+            SpawnPosition = spawnPosition;
+        }
+
+        public void SetPlaceableItemData(PlaceItemData placeItemData)
+        {
+            PlaceItemData = placeItemData;
         }
     }
 }
