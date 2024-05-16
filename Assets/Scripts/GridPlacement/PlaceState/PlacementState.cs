@@ -41,7 +41,7 @@ namespace GridPlacement.PlaceState
 
             gridData.PlaceObject(gridPosition, item.Size);
 
-            item.MoveToPlacePosition(gridPosition);
+            //item.MoveToPlacePosition(gridPosition);
 
             return true;
         }

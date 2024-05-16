@@ -1,79 +1,119 @@
-﻿using DG.Tweening;
-using GridPlacement;
-using Select;
-using Select.Implementation;
+﻿using GridPlacement;
+using GridPlacement.EventData;
+using GridPlacement.Hold;
+using MouseInteraction.Drag;
+using MouseInteraction.Manager;
+using MouseInteraction.Select;
+using TimeTickSystems;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Item
 {
-    public abstract class ItemBase : SelectObjectBase, IItem
+    public abstract class ItemBase : MonoBehaviour, ISelectObject, IPlaceItem, IDragObject, IHoldObject
     {
         protected PlacementSystem placementSystem;
 
-        private bool isPlaced;
-        private Sequence selectSequence;
-        private Vector3 putScale = new(1.2f, 1.2f);
-        private readonly float selectSequenceDuration = 0.5f;
+        private bool isSelected;
+        private bool isPrepeareToHold;
+        private Vector2 size;
 
-        public SpriteRenderer Renderer { get; private set; }
-        public Sprite Sprite { get; private set; }
-        public Vector2 Size { get; private set; }
-
-        protected override void SelectObject_Select(ISelect callback)
+        public Vector2 Size => size;
+        public bool IsSelected => isSelected;
+        
+        private void TimeTickSystem_OnTickPrepeareToHold(object sender, OnTickEventArgs e)
         {
-            base.SelectObject_Select(callback);
-
-            selectSequence.Restart();
-            selectSequence.Play();
-
-            placementSystem.StartPlacement(this);
-
-            placementSystem.AddPlacementEvent(OnPlaced, OnExit);
-        }
-
-        protected override void SelectObject_DeSelect(ISelect callback)
-        {
-            base.SelectObject_DeSelect(callback);
-
-            selectSequence.Pause();
-            transform.localScale = Vector3.one;
-
-            placementSystem.StopPlacement();
-
-            placementSystem.RemovePlacementEvent(OnPlaced, OnExit);
+            Debug.Log($"Tick: {TimeTickSystem.GetTick()}");
         }
 
         public void Setup(ItemData data, PlacementSystem placementSystem)
         {
-            Renderer = GetComponent<SpriteRenderer>();
-            Sprite = data.Sprite; 
-            Size = data.Size;
+            size = data.Size;
             this.placementSystem = placementSystem;
+        }
 
-            selectSequence = DOTween.Sequence();
-            selectSequence.Append(transform.DOScale(putScale, selectSequenceDuration));
-            selectSequence.Append(transform.DOScale(Vector3.one, selectSequenceDuration));
-            selectSequence.SetLoops(-1, LoopType.Restart);
-            selectSequence.Pause();
+        public void OnSelect(SelectEventData eventData)
+        {
+            if (isSelected)
+                return;
+
+            isSelected = true;
+
+            TimeTickSystem.OnTick += TimeTickSystem_OnTickPrepeareToHold;
+
+            Debug.Log("Select");
+        }
+
+        public void OnDeSelect(SelectEventData eventData)
+        {
+            if (!isSelected)
+                return;
+
+            isSelected = false;
+
+            TimeTickSystem.OnTick -= TimeTickSystem_OnTickPrepeareToHold;
+
+            Debug.Log("DeSelect");
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            SelectManager.Current.SetSelectedGameObject(this);
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+
         }
 
         public void OnPlaced()
         {
-            isPlaced = true;
 
-            placementSystem.RemovePlacementEvent(OnPlaced, OnExit);
         }
 
         public void OnExit()
         {
-            Debug.Log("OnExit");
+
         }
 
-        public void MoveToPlacePosition(Vector2 gridPosition, float duration = 1f)
+        public void OnDrag(PointerEventData eventData)
         {
-            var placePosition = gridPosition + new Vector2(Size.x / 2, Size.y / 2);
+            Debug.Log("Drag");
+        }
 
-            transform.DOMove(placePosition, duration);
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            Debug.Log("DragEnd");
+        }
+
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            Debug.Log("DragBegin");
+        }
+
+        public void OnHold()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnBeginHold()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnEndHold()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

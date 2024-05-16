@@ -1,28 +1,75 @@
-﻿using Select;
+﻿using GridPlacement.EventData;
+using MouseInteraction.Select;
+using System.Collections.Generic;
+using TimeTickSystems;
 using UnityEngine;
 
 namespace MouseInteraction.Manager
 {
-    [System.Serializable]
-    internal class SelectManager
+    public class SelectManager : MonoBehaviour
     {
-        private ISelect currentSelected;
+        private ISelectObject currentSelected;
         private bool selectionGuard;
-        public bool alreadySelecting
+        private SelectEventData selectEventData;
+
+        private SelectEventData SelectEventDataCache
+        {
+            get
+            {
+                if (selectEventData == null)
+                {
+                    selectEventData = new SelectEventData(this);
+                }
+
+                return selectEventData;
+            }
+        }
+
+        private static readonly List<SelectManager> selectManagers = new();
+
+        public bool AlreadySelecting
         {
             get { return selectionGuard; }
+        }
+
+        private void OnEnable()
+        {
+            TimeTickSystem.Create();
+            selectManagers.Add(this);
+        }
+
+        public static SelectManager Current
+        {
+            get
+            {
+                return (selectManagers.Count > 0) ? selectManagers[0] : null;
+            }
+            set
+            {
+                int num = selectManagers.IndexOf(value);
+                if (num > 0)
+                {
+                    selectManagers.RemoveAt(num);
+                    selectManagers.Insert(0, value);
+                }
+                else if (num < 0)
+                {
+                    Debug.LogError("Failed setting SelectManager.current to unknown SelectManager " + value);
+                }
+            }
         }
 
         private void DeSelect()
         {
             if(currentSelected == null) return;
 
-            currentSelected?.DeSelect();
+            currentSelected?.OnDeSelect(SelectEventDataCache);
 
+            selectEventData = null;
             currentSelected = null;
         }
 
-        public void SetSelectedGameObject(ISelect selected)
+        public void SetSelectedGameObject(ISelectObject selected)
         {
             if(selected == null && currentSelected == null) return;
 
@@ -44,7 +91,7 @@ namespace MouseInteraction.Manager
 
             currentSelected = selected;
 
-            selected?.Select();
+            currentSelected.OnSelect(SelectEventDataCache);
 
             selectionGuard = false;
         }

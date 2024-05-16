@@ -154,7 +154,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   placementSystem: {fileID: 1188428647}
-  mouseManager: {fileID: 1201028793}
 --- !u!114 &5797682
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -265,10 +264,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1393879606197705945, guid: cccc65eff491b27418bcf8698fae3210, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1499239789}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cccc65eff491b27418bcf8698fae3210, type: 3}
 --- !u!1839735485 &78706627 stripped
 Tilemap:
@@ -283,11 +279,6 @@ Tilemap:
 --- !u!4 &78706629 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8588964461948291908, guid: cccc65eff491b27418bcf8698fae3210, type: 3}
-  m_PrefabInstance: {fileID: 78706626}
-  m_PrefabAsset: {fileID: 0}
---- !u!156049354 &350018253 stripped
-Grid:
-  m_CorrespondingSourceObject: {fileID: 5556392984431384191, guid: cccc65eff491b27418bcf8698fae3210, type: 3}
   m_PrefabInstance: {fileID: 78706626}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &425786408
@@ -488,6 +479,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Presentation>k__BackingField: {fileID: 672747312}
+--- !u!1 &928486736
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 928486738}
+  m_Layer: 0
+  m_Name: TimeTickSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &928486738
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 928486736}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1188428646
 GameObject:
   m_ObjectHideFlags: 0
@@ -517,6 +539,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b99574177f59b047adb95cc418e76a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  previewSystem: {fileID: 0}
 --- !u!4 &1188428648
 Transform:
   m_ObjectHideFlags: 0
@@ -524,70 +547,6 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1188428646}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1201028792
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1201028794}
-  - component: {fileID: 1201028793}
-  m_Layer: 0
-  m_Name: MouseSelectManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1201028793
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1201028792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 943b1df0b9de16a49a913c9bd094e115, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  leftMouse:
-    m_Name: Left Mouse
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 741b89be-62e2-4008-bb88-217caf242c6d
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 04862b16-9327-4a4f-bb79-479aa9bd14ef
-      m_Path: <Mouse>/leftButton
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Left Mouse
-      m_Flags: 0
-    m_Flags: 0
-  placementLayermask:
-    serializedVersion: 2
-    m_Bits: 8
---- !u!4 &1201028794
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1201028792}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -742,24 +701,6 @@ MonoBehaviour:
   defaultSelectedButton: {fileID: 0}
   <CanvasGroup>k__BackingField: {fileID: 1263155343}
   <Presentation>k__BackingField: {fileID: 1263155342}
---- !u!1 &1499239783 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1393879606197705945, guid: cccc65eff491b27418bcf8698fae3210, type: 3}
-  m_PrefabInstance: {fileID: 78706626}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1499239789
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1499239783}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7fc0c98f22b0b594bb99eed572d2bb01, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  grid: {fileID: 350018253}
 --- !u!1 &1654871246
 GameObject:
   m_ObjectHideFlags: 0
@@ -772,6 +713,7 @@ GameObject:
   - component: {fileID: 1654871248}
   - component: {fileID: 1654871247}
   - component: {fileID: 1654871250}
+  - component: {fileID: 1654871251}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -897,6 +839,22 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!114 &1654871251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1654871246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56666c5a40171f54783dd416a44f42bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 8
+  m_MaxRayIntersections: 0
 --- !u!1 &1691691886
 GameObject:
   m_ObjectHideFlags: 0
@@ -939,6 +897,7 @@ GameObject:
   - component: {fileID: 1717589997}
   - component: {fileID: 1717589996}
   - component: {fileID: 1717589995}
+  - component: {fileID: 1717589998}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -1006,6 +965,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1717589998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1717589994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a3b2b63c2f48a44590ff36b8ade1c60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2010179086
 GameObject:
   m_ObjectHideFlags: 0
@@ -1046,5 +1017,5 @@ SceneRoots:
   - {fileID: 425786410}
   - {fileID: 672747318}
   - {fileID: 1717589997}
-  - {fileID: 1201028794}
   - {fileID: 1188428648}
+  - {fileID: 928486738}
