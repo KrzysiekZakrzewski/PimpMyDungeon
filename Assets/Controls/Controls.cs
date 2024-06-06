@@ -28,8 +28,30 @@ namespace Inputs
         {
             ""name"": ""Gameplay"",
             ""id"": ""f0ae6f0f-b0a9-41c4-8c5c-85b46d7d9cc9"",
-            ""actions"": [],
-            ""bindings"": []
+            ""actions"": [
+                {
+                    ""name"": ""Rotate"",
+                    ""type"": ""Button"",
+                    ""id"": ""fdfa1296-9839-4eff-b13a-953ff01debb8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""68e1f923-ac34-4f00-bf82-ef397e28ca40"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         },
         {
             ""name"": ""UI"",
@@ -552,6 +574,7 @@ namespace Inputs
 }");
             // Gameplay
             m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
+            m_Gameplay_Rotate = m_Gameplay.FindAction("Rotate", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -625,10 +648,12 @@ namespace Inputs
         // Gameplay
         private readonly InputActionMap m_Gameplay;
         private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
+        private readonly InputAction m_Gameplay_Rotate;
         public struct GameplayActions
         {
             private @Controls m_Wrapper;
             public GameplayActions(@Controls wrapper) { m_Wrapper = wrapper; }
+            public InputAction @Rotate => m_Wrapper.m_Gameplay_Rotate;
             public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -638,10 +663,16 @@ namespace Inputs
             {
                 if (instance == null || m_Wrapper.m_GameplayActionsCallbackInterfaces.Contains(instance)) return;
                 m_Wrapper.m_GameplayActionsCallbackInterfaces.Add(instance);
+                @Rotate.started += instance.OnRotate;
+                @Rotate.performed += instance.OnRotate;
+                @Rotate.canceled += instance.OnRotate;
             }
 
             private void UnregisterCallbacks(IGameplayActions instance)
             {
+                @Rotate.started -= instance.OnRotate;
+                @Rotate.performed -= instance.OnRotate;
+                @Rotate.canceled -= instance.OnRotate;
             }
 
             public void RemoveCallbacks(IGameplayActions instance)
@@ -779,6 +810,7 @@ namespace Inputs
         public UIActions @UI => new UIActions(this);
         public interface IGameplayActions
         {
+            void OnRotate(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {

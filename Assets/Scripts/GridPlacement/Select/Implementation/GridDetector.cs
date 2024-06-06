@@ -4,7 +4,7 @@ using Zenject;
 
 namespace MouseInteraction
 {
-    public class GridDetector //: MouseObject
+    public class GridDetector : MonoBehaviour
     {
         [SerializeField]
         private Grid grid;

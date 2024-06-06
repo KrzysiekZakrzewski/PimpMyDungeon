@@ -19,5 +19,10 @@ namespace GridPlacement.PlaceState
         {
             throw new System.NotImplementedException();
         }
+
+        public bool CheckPlacementValidity(Vector2Int gridPosition)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

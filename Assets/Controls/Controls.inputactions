@@ -4,8 +4,30 @@
         {
             "name": "Gameplay",
             "id": "f0ae6f0f-b0a9-41c4-8c5c-85b46d7d9cc9",
-            "actions": [],
-            "bindings": []
+            "actions": [
+                {
+                    "name": "Rotate",
+                    "type": "Button",
+                    "id": "fdfa1296-9839-4eff-b13a-953ff01debb8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "68e1f923-ac34-4f00-bf82-ef397e28ca40",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         },
         {
             "name": "UI",

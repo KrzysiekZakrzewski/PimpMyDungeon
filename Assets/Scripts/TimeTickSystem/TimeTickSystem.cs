@@ -17,7 +17,7 @@ namespace TimeTickSystems
             if (timeTickSystemGameObject != null)
                 return;
 
-            timeTickSystemGameObject = new GameObject("TimeTickSystem");
+            timeTickSystemGameObject = new GameObject("TimeTickSystemObject");
             timeTickSystemGameObject.AddComponent<TimeTickSystemObject>();
         }
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
 
 namespace GridPlacement
@@ -7,8 +6,8 @@ namespace GridPlacement
     [System.Serializable]
     public class GridData
     {
-        private HashSet<Vector2Int> emptyPositions;
-        private Dictionary<Vector2Int, HashSet<Vector2Int>> occupiedPositions;
+        private readonly HashSet<Vector2Int> emptyPositions;
+        private readonly Dictionary<Vector2Int, HashSet<Vector2Int>> occupiedPositions;
 
         public GridData(HashSet<Vector2Int> floorPositions, IEnumerable<Vector2Int> obstaclesPostition)
         {
@@ -18,36 +17,35 @@ namespace GridPlacement
             occupiedPositions = new Dictionary<Vector2Int, HashSet<Vector2Int>>();
         }
 
-        public void PlaceObject(Vector2Int placePosition, Vector2 size)
+        private Vector2Int GetPositionToCheck(Vector2Int originPosition, List<Vector2Int> itemPoints, int rotationId, int i)
+        {
+            return originPosition + PositionCalculator.CalculateGridRotation(itemPoints[i], rotationId);
+        }
+
+        public void PlaceObject(Vector2Int originPosition, List<Vector2Int> itemPoints, int rotationId)
         {
             HashSet<Vector2Int> positions = new();
 
-            for (int x = 0; x < size.x; x++)
+            for (int i = 0; i < itemPoints.Count; i++)
             {
-                for (int y = 0; y < size.y; y++)
-                {
-                    var position = placePosition + new Vector2Int(x, y);
+                Vector2Int positionToCheck = GetPositionToCheck(originPosition, itemPoints, rotationId, i);
 
-                    positions.Add(position);
-                }
+                positions.Add(positionToCheck);
             }
 
             emptyPositions.ExceptWith(positions);
 
-            occupiedPositions.Add(placePosition, positions);
+            occupiedPositions.Add(originPosition, positions);
         }
 
-        public bool CheckValidation(Vector2Int placePos, Vector2 size)
+        public bool CheckValidation(Vector2Int originPosition, List<Vector2Int> itemPoints, int rotationId)
         {
-            for (int x = 0; x < size.x; x++)
+            for (int i = 0; i < itemPoints.Count; i++)
             {
-                for (int y = 0; y < size.y; y++)
-                {
-                    var positionToCheck = placePos + new Vector2Int(x, y);
+                Vector2Int positionToCheck = GetPositionToCheck(originPosition, itemPoints, rotationId, i);
 
-                    if(!emptyPositions.Contains(positionToCheck))
-                        return false;
-                }
+                if (!emptyPositions.Contains(positionToCheck))
+                    return false;
             }
 
             return true;

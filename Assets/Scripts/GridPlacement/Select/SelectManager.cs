@@ -1,5 +1,4 @@
-﻿using GridPlacement.EventData;
-using MouseInteraction.Select;
+﻿using MouseInteraction.Select;
 using System.Collections.Generic;
 using TimeTickSystems;
 using UnityEngine;
@@ -8,22 +7,9 @@ namespace MouseInteraction.Manager
 {
     public class SelectManager : MonoBehaviour
     {
-        private ISelectObject currentSelected;
         private bool selectionGuard;
-        private SelectEventData selectEventData;
 
-        private SelectEventData SelectEventDataCache
-        {
-            get
-            {
-                if (selectEventData == null)
-                {
-                    selectEventData = new SelectEventData(this);
-                }
-
-                return selectEventData;
-            }
-        }
+        public SelectObject CurrentSelected { private set; get; }
 
         private static readonly List<SelectManager> selectManagers = new();
 
@@ -59,19 +45,17 @@ namespace MouseInteraction.Manager
             }
         }
 
-        private void DeSelect()
+        private void Deselect()
         {
-            if(currentSelected == null) return;
+            if(CurrentSelected == null) return;
 
-            currentSelected?.OnDeSelect(SelectEventDataCache);
-
-            selectEventData = null;
-            currentSelected = null;
+            CurrentSelected.Deselect();
+            CurrentSelected = null;
         }
 
-        public void SetSelectedGameObject(ISelectObject selected)
+        public void SetSelectedObject(SelectObject selected)
         {
-            if(selected == null && currentSelected == null) return;
+            if(selected == null && CurrentSelected == null) return;
 
             if (selectionGuard)
             {
@@ -81,17 +65,17 @@ namespace MouseInteraction.Manager
 
             selectionGuard = true;
 
-            if (selected == currentSelected)
+            if (selected == CurrentSelected)
             {
                 selectionGuard = false;
                 return;
             }
 
-            DeSelect();
+            Deselect();
 
-            currentSelected = selected;
+            CurrentSelected = selected;
 
-            currentSelected.OnSelect(SelectEventDataCache);
+            CurrentSelected.Select();
 
             selectionGuard = false;
         }

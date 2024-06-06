@@ -1,4 +1,5 @@
 using Generator.Item;
+using GridPlacement;
 using Item;
 using System;
 using System.Collections.Generic;
@@ -39,7 +40,7 @@ namespace Generator
             for (int i = 0; i < itemPoints.Count; i++)
             {
                 Vector2Int newPosToCheck
-                        = originPosition + CalculateRotation(itemPoints[i], rotationId);
+                        = originPosition + PositionCalculator.CalculateGridRotation(itemPoints[i], rotationId);
 
                 if (!emptyTiles.Contains(newPosToCheck))
                     return (false, positions);
@@ -87,28 +88,6 @@ namespace Generator
             }
 
             return potentialPositions;
-        }
-
-        private Vector2Int CalculateRotation(Vector2Int point, int rotationID)
-        {
-            Vector2Int newPoint = point;
-
-            switch (rotationID)
-            {
-                case 0:
-                    break;
-                case 1:
-                    newPoint = new Vector2Int(point.y, -point.x);
-                    break;
-                case 2:
-                    newPoint = new Vector2Int(-point.x, -point.y);
-                    break;
-                case 3:
-                    newPoint = new Vector2Int(-point.y, point.x);
-                    break;
-            }
-
-            return newPoint;
         }
 
         private void SortItems(List<ItemLevelGeneratorData> itemGeneratorData)

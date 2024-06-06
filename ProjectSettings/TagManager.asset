@@ -11,7 +11,7 @@ TagManager:
   - MouseSelect
   - Water
   - UI
-  - 
+  - GridPlacement
   - 
   - 
   - 
@@ -41,9 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Obstacle
-    uniqueID: 77197299
-    locked: 0
   - name: Preview
     uniqueID: 2570512973
+    locked: 0
+  - name: Obstacle
+    uniqueID: 77197299
     locked: 0

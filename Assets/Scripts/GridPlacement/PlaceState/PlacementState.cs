@@ -1,15 +1,14 @@
 ﻿using Item;
 using UnityEngine;
-using DG.Tweening;
 
 namespace GridPlacement.PlaceState
 {
     public class PlacementState : IPlacementState
     {
         private GridData gridData;
-        private ItemBase item;
+        private IPlaceItem item;
 
-        public PlacementState(GridData gridData, ItemBase item)
+        public PlacementState(GridData gridData, IPlaceItem item)
         {
             this.gridData = gridData;
             this.item = item;
@@ -22,9 +21,9 @@ namespace GridPlacement.PlaceState
 
         }
 
-        private bool CheckPlacementValidity(Vector2Int gridPosition)
+        public bool CheckPlacementValidity(Vector2Int gridPosition)
         {
-            return gridData.CheckValidation(gridPosition, item.Size);
+            return gridData.CheckValidation(gridPosition, item.ItemPoints, item.RotationState);
         }
 
         public void EndState()
@@ -39,9 +38,9 @@ namespace GridPlacement.PlaceState
             if (!placementValidity)
                 return false;
 
-            gridData.PlaceObject(gridPosition, item.Size);
+            gridData.PlaceObject(gridPosition, item.ItemPoints, item.RotationState);
 
-            //item.MoveToPlacePosition(gridPosition);
+            item.OnPlaced(gridPosition);
 
             return true;
         }
