@@ -314,7 +314,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d88c3db888411f44907edc4eaad7d92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  previewRenderer: {fileID: 349124246}
   positiveColor: {r: 0.18448043, g: 1, b: 0, a: 1}
   negativeColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!4 &343140420
@@ -1200,11 +1199,11 @@ PrefabInstance:
       objectReference: {fileID: 1188428647}
     - target: {fileID: 2814453570828032055, guid: d9a60e47de0baf34ab6526018e493532, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -3.82
       objectReference: {fileID: 0}
     - target: {fileID: 2814453570828032055, guid: d9a60e47de0baf34ab6526018e493532, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -1.27
       objectReference: {fileID: 0}
     - target: {fileID: 2814453570828032055, guid: d9a60e47de0baf34ab6526018e493532, type: 3}
       propertyPath: m_LocalPosition.z

@@ -8,23 +8,18 @@ namespace GridPlacement
     public class PreviewSystem : MonoBehaviour
     {
         [SerializeField]
-        private SpriteRenderer previewRenderer;
-
-        [SerializeField]
         private Color positiveColor, negativeColor;
 
-        private IPlacementState placementState;
+        private SpriteRenderer previewRenderer;
         private Vector2 size;
+        private IPlacementState placementState;
         private bool isShow;
 
-        public void SetupPreview(IPlacementState placementState, IPlaceItem item)
+        public void SetupPreview(IPlacementState placementState, IPlaceItem placeItem)
         {
             this.placementState = placementState;
-            size = item.Size;
-
-            previewRenderer.gameObject.transform.localScale = size;
-
-            UpdateRotate(item.GameObject.transform.localEulerAngles);
+            previewRenderer = placeItem.PreviewRenderer;
+            size = placeItem.Size;
         }
 
         public bool IsShow()
@@ -55,6 +50,7 @@ namespace GridPlacement
         public void OffPreview()
         {
             placementState = null;
+            previewRenderer = null;
 
             HidePreview();
         }
@@ -73,14 +69,6 @@ namespace GridPlacement
             previewRenderer.DOColor(resultColor, 0.2f);
 
             previewRenderer.transform.position = PositionCalculator.CalculatePosition(gridPosition, size, rotationState);
-        }
-
-        public void UpdateRotate(Vector3 localEulerAngles)
-        {
-            if (!isShow)
-                return;
-
-            previewRenderer.gameObject.transform.localEulerAngles = localEulerAngles;
         }
     }
 }

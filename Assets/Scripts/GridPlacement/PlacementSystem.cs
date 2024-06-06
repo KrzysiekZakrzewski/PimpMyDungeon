@@ -24,7 +24,7 @@ namespace GridPlacement
         private Vector2Int lastChackedPosition;
 
         private event Action OnPlaced;
-        private event Action<RotateCallback> OnRotate;
+        private event Action OnRotate;
 
         private void OnEnable()
         {
@@ -46,9 +46,7 @@ namespace GridPlacement
 
         private void Rotate(InputAction.CallbackContext callbackContext)
         {
-            RotateCallback rotateCallback = new RotateCallback(previewSystem.UpdateRotate);
-
-            OnRotate?.Invoke(rotateCallback);
+            OnRotate?.Invoke();
         }
 
         private bool IsSameGridPosition(Vector2Int gridPosition)

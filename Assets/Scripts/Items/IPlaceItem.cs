@@ -9,13 +9,11 @@ namespace Item
         int RotationState { get; }
         Vector2 Size { get; }
         List<Vector2Int> ItemPoints { get; }
-        Sprite Sprite { get; }
+        SpriteRenderer PreviewRenderer { get; }
 
         void Setup(ItemData data, PlacementSystem placementSystem);
         void OnPlaced(Vector2Int gridPosition);
         void OnExit();
-        void Rotate(RotateCallback rotateCallback);
+        void Rotate();
     }
-
-    public delegate void RotateCallback(Vector3 localEulerAngles);
 }

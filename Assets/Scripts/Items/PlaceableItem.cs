@@ -11,6 +11,8 @@ namespace Item
     {
         [SerializeField]
         private ItemData itemData;
+        [SerializeField]
+        private SpriteRenderer previewRenderer;
 
         [SerializeField]
         private Transform gridDetectorPoint;
@@ -20,21 +22,18 @@ namespace Item
 
         private Vector2 size;
         private List<Vector2Int> itemPoints;
-        private Sprite sprite;
         private int rotationState;
         private bool isRotating;
 
         public int RotationState => rotationState;
         public Vector2 Size => size;
         public List<Vector2Int> ItemPoints => itemPoints;
-        public Sprite Sprite => sprite;
         public GameObject GameObject => gameObject;
 
+        public SpriteRenderer PreviewRenderer => previewRenderer;
 
         private void Awake()
         {
-            sprite = GetComponent<SpriteRenderer>().sprite;
-
             if (itemData == null)
                 return;
 
@@ -85,7 +84,7 @@ namespace Item
             placementSystem.OnPlaceItem(gridDetectorPoint.position);
         }
 
-        public void Rotate(RotateCallback rotateCallback)
+        public void Rotate()
         {
             if (isRotating)
                 return;
@@ -103,7 +102,6 @@ namespace Item
                 () =>
                 {
                     isRotating = false;
-                    rotateCallback.Invoke(gameObject.transform.localEulerAngles);
                 }
             );
         }
