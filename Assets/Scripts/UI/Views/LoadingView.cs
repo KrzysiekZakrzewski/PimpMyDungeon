@@ -1,5 +1,8 @@
 using Game.SceneLoader;
+using Inputs;
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using ViewSystem;
 using ViewSystem.Implementation;
 using Zenject;
@@ -12,6 +15,9 @@ namespace Game.View
         private Camera loadingViewCamera;
 
         private SceneLoadManagers sceneLoadManagers;
+
+        [NonSerialized]
+        private Inputs.PlayerInput playerInput;
 
         public bool IsShowPresentationComplete { get; private set; }
 
@@ -26,6 +32,8 @@ namespace Game.View
         protected override void Awake()
         {
             base.Awake();
+
+            playerInput = InputManager.GetPlayer(0);
         }
 
         protected override void OnDestroy()
@@ -38,6 +46,8 @@ namespace Game.View
             base.Presentation_OnShowPresentationComplete(presentation);
 
             IsShowPresentationComplete = true;
+
+            playerInput.AddInputEventDelegate(Continue_OnPerformed, InputActionEventType.ButtonUp, InputUtilities.AnyKey);
 
             loadingViewCamera.gameObject.SetActive(true);
         }
@@ -53,10 +63,12 @@ namespace Game.View
         {
             base.NavigateFrom(nextViewStackItem);
 
+            playerInput.RemoveInputEventDelegate(Continue_OnPerformed);
+
             loadingViewCamera.gameObject.SetActive(false);
         }
 
-        private void Continue_OnPerformed()
+        private void Continue_OnPerformed(InputAction.CallbackContext callback)
         {
             sceneLoadManagers.OpenScenes();
         }

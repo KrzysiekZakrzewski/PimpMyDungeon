@@ -159,7 +159,7 @@ namespace GridPlacement
 
         public void SubscribeRotateEvent(Action<InputAction.CallbackContext> action)
         {
-            playerInput.AddInputEventDelegate(action, InputActionEventType.ButtonPressed, "Rotate");
+            playerInput.AddInputEventDelegate(action, InputActionEventType.ButtonPressed, InputUtilities.Rotate);
         }
 
         public void UnSubscribeRotateEvent(Action<InputAction.CallbackContext> action)
