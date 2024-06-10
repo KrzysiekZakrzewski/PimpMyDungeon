@@ -5,9 +5,6 @@ namespace Item
 {    public class ItemData : ScriptableObject
     {
         [field: SerializeField]
-        public Sprite Sprite { private set; get; }
-
-        [field: SerializeField]
         public List<Vector2Int> ItemPoints { private set; get; }
 
         [field: SerializeField]

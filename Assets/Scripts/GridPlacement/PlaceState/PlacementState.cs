@@ -6,9 +6,9 @@ namespace GridPlacement.PlaceState
     public class PlacementState : IPlacementState
     {
         private GridData gridData;
-        private IPlaceItem item;
+        private PlaceableItem item;
 
-        public PlacementState(GridData gridData, IPlaceItem item)
+        public PlacementState(GridData gridData, PlaceableItem item)
         {
             this.gridData = gridData;
             this.item = item;

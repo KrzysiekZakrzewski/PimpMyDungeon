@@ -38,6 +38,15 @@ namespace GridPlacement
             occupiedPositions.Add(originPosition, positions);
         }
 
+        public void RemoveObject(Vector2Int originPosition)
+        {
+            occupiedPositions.TryGetValue(originPosition, out HashSet<Vector2Int> positions);
+
+            emptyPositions.UnionWith(positions);
+
+            occupiedPositions.Remove(originPosition);
+        }
+
         public bool CheckValidation(Vector2Int originPosition, List<Vector2Int> itemPoints, int rotationId)
         {
             for (int i = 0; i < itemPoints.Count; i++)

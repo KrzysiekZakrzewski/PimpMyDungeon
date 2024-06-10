@@ -15,7 +15,7 @@ namespace GridPlacement
         private IPlacementState placementState;
         private bool isShow;
 
-        public void SetupPreview(IPlacementState placementState, IPlaceItem placeItem)
+        public void SetupPreview(IPlacementState placementState, PlaceableItem placeItem)
         {
             this.placementState = placementState;
             previewRenderer = placeItem.PreviewRenderer;
@@ -49,10 +49,10 @@ namespace GridPlacement
 
         public void OffPreview()
         {
+            HidePreview();
+
             placementState = null;
             previewRenderer = null;
-
-            HidePreview();
         }
 
         public void UpdatePreview(Vector2Int gridPosition, int rotationState)

@@ -1,4 +1,5 @@
 using GridPlacement.PlaceState;
+using Inputs;
 using Item;
 using System;
 using UnityEngine;
@@ -14,39 +15,20 @@ namespace GridPlacement
         private Grid grid;
         [SerializeField]
         private PreviewSystem previewSystem;
-        [SerializeField]
-        private InputAction testRotateAction;
+
+        [NonSerialized]
+        private Inputs.PlayerInput playerInput;
 
         private readonly Vector2Int resetLastCheckedPosition = new(-10000, -10000);
-
         private GridData gridData;
         private IPlacementState placeState;
         private Vector2Int lastChackedPosition;
 
-        private event Action OnPlaced;
-        private event Action OnRotate;
-
-        private void OnEnable()
-        {
-            testRotateAction.performed -= Rotate;
-            testRotateAction.Enable();
-        }
-
-        private void OnDisable()
-        {
-            testRotateAction.performed -= Rotate;
-            testRotateAction.Disable();
-        }
-
         private void Start()
         {
-            lastChackedPosition = resetLastCheckedPosition;
-            testRotateAction.performed += Rotate;
-        }
+            playerInput = InputManager.GetPlayer(0);
 
-        private void Rotate(InputAction.CallbackContext callbackContext)
-        {
-            OnRotate?.Invoke();
+            lastChackedPosition = resetLastCheckedPosition;
         }
 
         private bool IsSameGridPosition(Vector2Int gridPosition)
@@ -75,7 +57,7 @@ namespace GridPlacement
 
         private Vector3 GetMouseWorldPosition()
         {
-            var mouseValue = Mouse.current.position.ReadValue();
+            var mouseValue = Pointer.current.position.ReadValue();//Mouse.current.position.ReadValue();
 
             return Camera.main.ScreenToWorldPoint(mouseValue);
         }
@@ -85,7 +67,7 @@ namespace GridPlacement
             this.gridData = gridData;
         }
 
-        public void StartPlacement(IPlaceItem item)
+        public void StartPlacement(PlaceableItem item)
         {
             StopPlacement();
 
@@ -93,9 +75,24 @@ namespace GridPlacement
 
             previewSystem.SetupPreview(placeState, item);
 
-            OnRotate += item.Rotate;
+            SubscribeRotateEvent(item.Rotate);
+        }
 
-            //ADD Rotation Evenet
+        public void RemovePlacement(PlaceableItem item)
+        {
+            StopPlacement();
+
+            placeState = new RemoveState(gridData, item);
+
+            Vector2Int gridDetectorValue = ConvertToGridPosition(item.GridDetectorPoint.position);
+
+            var removeResults = placeState.OnAction(gridDetectorValue);
+
+            item.OnGridChanged(removeResults);
+
+            if (!removeResults) return;
+
+            StartPlacement(item);
         }
 
         public void StopPlacement()
@@ -112,7 +109,7 @@ namespace GridPlacement
             previewSystem.OffPreview();
         }
 
-        public void OnPlaceItem(Vector2 position)
+        public bool OnPlaceItem(Vector2 position, PlaceableItem item)
         {
             var rayCastHit = GetRayCastHit(position);
 
@@ -121,17 +118,17 @@ namespace GridPlacement
             Vector2Int gridPosition = ConvertToGridPosition(rayCastPosition);
 
             if (placeState == null)
-                return;
+                return false;
 
             if (!placeState.OnAction(gridPosition))
             {
                 StopPlacement();
-                return;
+                return false;
             }
 
             previewSystem.OffPreview();
 
-            OnPlaced?.Invoke();
+            return true;
         }
 
         public (Vector2, bool) OnItemMove(Vector2 gridDetectorPosition, int rotationState)
@@ -158,6 +155,16 @@ namespace GridPlacement
                 previewSystem.UpdatePreview(gridDetectorValue, rotationState);
 
             return (gridValue, true);
+        }
+
+        public void SubscribeRotateEvent(Action<InputAction.CallbackContext> action)
+        {
+            playerInput.AddInputEventDelegate(action, InputActionEventType.ButtonPressed, "Rotate");
+        }
+
+        public void UnSubscribeRotateEvent(Action<InputAction.CallbackContext> action)
+        {
+            playerInput.RemoveInputEventDelegate(action);
         }
     }
 }

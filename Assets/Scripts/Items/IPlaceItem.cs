@@ -1,6 +1,7 @@
 ﻿using GridPlacement;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Item
 {
@@ -10,10 +11,10 @@ namespace Item
         Vector2 Size { get; }
         List<Vector2Int> ItemPoints { get; }
         SpriteRenderer PreviewRenderer { get; }
+        bool OnGrid { get; }
 
-        void Setup(ItemData data, PlacementSystem placementSystem);
+        void Setup(ItemData data, PlacementSystem placementSystem, Vector2 basePosition);
         void OnPlaced(Vector2Int gridPosition);
-        void OnExit();
-        void Rotate();
+        void Rotate(InputAction.CallbackContext callbackContext);
     }
 }

@@ -337,9 +337,9 @@ namespace Generator
 
                 var newObject = Instantiate(item.PlaceItemData.Prefab, position, Quaternion.identity, itemMagazine);
 
-                var newItem = newObject.GetComponent<IPlaceItem>();
+                var newItem = newObject.GetComponent<PlaceableItem>();
 
-                newItem.Setup(item.PlaceItemData, placementSystem);
+                newItem.Setup(item.PlaceItemData, placementSystem, position);
 
                 yield return new WaitForSeconds(waitBuilder);
             }
