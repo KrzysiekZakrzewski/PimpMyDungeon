@@ -1,7 +1,7 @@
 using System;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using System.Numerics;
+using UnityEngine;
 
 namespace Inputs
 {
@@ -9,6 +9,7 @@ namespace Inputs
     public class PlayerInput
     {
         private Controls controls;
+        private InputAction mouseAction;
 
         private Dictionary<Action<InputAction.CallbackContext>, Dictionary<string, List<InputActionEventType>>> inputActionLUT;
 
@@ -16,10 +17,20 @@ namespace Inputs
         {
             inputActionLUT = new Dictionary<Action<InputAction.CallbackContext>, Dictionary<string, List<InputActionEventType>>>();
 
-            if(controls == null)
-                controls = new Controls();
+            controls ??= new Controls();
+
+            CreateMouseAction();
 
             EnableActions();
+        }
+
+        private void CreateMouseAction()
+        {
+            mouseAction = new InputAction(
+                    type: InputActionType.Value);
+
+            mouseAction.AddBinding("<Pointer>/position");
+            mouseAction.AddBinding("<Mouse>/position");
         }
 
         private bool CanAddDelegate(Action<InputAction.CallbackContext> callback, InputActionEventType eventType, InputAction inputAction)
@@ -208,14 +219,21 @@ namespace Inputs
             return action.ReadValue<TValue>();
         }
 
+        public Vector2 GetCoordinates()
+        {
+            return mouseAction.ReadValue<Vector2>();
+        }
+
         public void EnableActions()
         {
             controls.Enable();
+            mouseAction.Enable();
         }
 
         public void DisableActions()
         {
             controls.Disable();
+            mouseAction.Disable();
         }
     }
 

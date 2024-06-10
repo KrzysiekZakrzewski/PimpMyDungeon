@@ -57,7 +57,7 @@ namespace GridPlacement
 
         private Vector3 GetMouseWorldPosition()
         {
-            var mouseValue = Pointer.current.position.ReadValue();//Mouse.current.position.ReadValue();
+            var mouseValue = playerInput.GetCoordinates();
 
             return Camera.main.ScreenToWorldPoint(mouseValue);
         }

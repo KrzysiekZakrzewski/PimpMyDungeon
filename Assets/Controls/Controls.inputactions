@@ -13,15 +13,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "New action",
-                    "type": "Value",
-                    "id": "a111f401-b57e-421a-9188-e6489150f1e5",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -38,23 +29,12 @@
                 },
                 {
                     "name": "",
-                    "id": "99a96594-4039-4b64-b160-1c98a44327a1",
-                    "path": "<Mouse>/position",
-                    "interactions": "",
+                    "id": "1ba668c6-9ddc-4703-b7c9-ef57138002a1",
+                    "path": "<Touchscreen>/touch1/tap",
+                    "interactions": "Tap",
                     "processors": "",
                     "groups": "",
-                    "action": "New action",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "89ee3a5a-256f-419d-93ef-bf3abdfac19f",
-                    "path": "<Pointer>/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "New action",
+                    "action": "Rotate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
