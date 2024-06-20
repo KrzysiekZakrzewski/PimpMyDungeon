@@ -46,6 +46,15 @@ namespace Inputs
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Skip"",
+                    ""type"": ""Button"",
+                    ""id"": ""6da2fa8b-ae53-4f79-be0a-278b5edfe634"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Hold(duration=2)"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -90,6 +99,28 @@ namespace Inputs
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d7c08429-d328-4534-a69c-ca311c120659"",
+                    ""path"": ""<Touchscreen>/Press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a3a39e97-793f-4dda-8d96-cfa7f8754bb4"",
+                    ""path"": ""<Keyboard>/anyKey"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -618,6 +649,7 @@ namespace Inputs
             m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
             m_Gameplay_Rotate = m_Gameplay.FindAction("Rotate", throwIfNotFound: true);
             m_Gameplay_AnyKey = m_Gameplay.FindAction("AnyKey", throwIfNotFound: true);
+            m_Gameplay_Skip = m_Gameplay.FindAction("Skip", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -693,12 +725,14 @@ namespace Inputs
         private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
         private readonly InputAction m_Gameplay_Rotate;
         private readonly InputAction m_Gameplay_AnyKey;
+        private readonly InputAction m_Gameplay_Skip;
         public struct GameplayActions
         {
             private @Controls m_Wrapper;
             public GameplayActions(@Controls wrapper) { m_Wrapper = wrapper; }
             public InputAction @Rotate => m_Wrapper.m_Gameplay_Rotate;
             public InputAction @AnyKey => m_Wrapper.m_Gameplay_AnyKey;
+            public InputAction @Skip => m_Wrapper.m_Gameplay_Skip;
             public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -714,6 +748,9 @@ namespace Inputs
                 @AnyKey.started += instance.OnAnyKey;
                 @AnyKey.performed += instance.OnAnyKey;
                 @AnyKey.canceled += instance.OnAnyKey;
+                @Skip.started += instance.OnSkip;
+                @Skip.performed += instance.OnSkip;
+                @Skip.canceled += instance.OnSkip;
             }
 
             private void UnregisterCallbacks(IGameplayActions instance)
@@ -724,6 +761,9 @@ namespace Inputs
                 @AnyKey.started -= instance.OnAnyKey;
                 @AnyKey.performed -= instance.OnAnyKey;
                 @AnyKey.canceled -= instance.OnAnyKey;
+                @Skip.started -= instance.OnSkip;
+                @Skip.performed -= instance.OnSkip;
+                @Skip.canceled -= instance.OnSkip;
             }
 
             public void RemoveCallbacks(IGameplayActions instance)
@@ -863,6 +903,7 @@ namespace Inputs
         {
             void OnRotate(InputAction.CallbackContext context);
             void OnAnyKey(InputAction.CallbackContext context);
+            void OnSkip(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {

@@ -1,69 +1,110 @@
-using DG.Tweening;
+using Levels;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using System;
+using UnityEngine.UI;
+using ViewSystem;
+using ViewSystem.Implementation;
+using Zenject;
 
-public class SwipeController : MonoBehaviour, IEndDragHandler
+public class SwipeController : SingleViewTypeStackController
 {
     [SerializeField]
-    private int maxPages;
+    private Button nextButton, prevButton;
     [SerializeField]
-    private Vector2 pageStep;
+    private ScrollLevelLeftView leftPage;
     [SerializeField]
-    private RectTransform levelPagesRect;
-    [SerializeField]
-    private float tweenTime;
-    [SerializeField]
-    private Ease ease = Ease.OutCubic;
+    private ScrollLevelRightView rightPage;
 
-    private int currentPage;
-    private Vector2 targetPosition;
-    private float dragTreshould;
+    private int lastPageId;
+    private bool isMoving;
 
-    private void Awake()
+    private LevelManager levelManager;
+
+    public int PageId { private set; get; }
+
+    public static readonly int ButtonsPerPage = 10;
+
+    [Inject]
+    private void Inject(LevelManager levelManager)
     {
-        currentPage = 1;
-        targetPosition = levelPagesRect.anchoredPosition;
-        dragTreshould = Screen.width / 15;
+        this.levelManager = levelManager;
     }
 
-    private void Next()
+    protected override void Awake()
     {
-        if(currentPage < maxPages)
+        base.Awake();
+
+        Init();
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        leftPage.Presentation.OnShowPresentationComplete -= MovingComplete;
+        rightPage.Presentation.OnShowPresentationComplete -= MovingComplete;
+    }
+
+    private void Init()
+    {
+        leftPage.Init(this, levelManager, MovingComplete);
+        rightPage.Init(this, levelManager, MovingComplete);
+
+        nextButton.onClick.AddListener(NextPage);
+        prevButton.onClick.AddListener(PrevPage);
+
+        var levelsCount = levelManager.GetLevelsCount();
+
+        lastPageId = levelsCount / ButtonsPerPage;
+    }
+
+    private void MovingComplete(IAmViewPresentation presentation)
+    {
+        isMoving = false;
+    }
+
+    private void NextPage()
+    {
+        if (PageId == lastPageId)
+            return;
+
+        leftPage.SwipePageToLeft();
+        rightPage.SwipePageToLeft();
+
+        PageId++;
+
+        SwipePage();
+    }
+
+    private void PrevPage()
+    {
+        if (PageId == 0)
+            return;
+
+        leftPage.SwipePageToRight();
+        rightPage.SwipePageToRight();
+
+        PageId--;
+
+        SwipePage();
+    }
+
+    public void SwipePage()
+    {
+        if (isMoving)
+            return;
+
+        isMoving = true;
+
+        var currentPage = Peek();
+
+        if(currentPage == null)
         {
-            currentPage++;
-            targetPosition += pageStep;
-            MovePage();
-        }
-    }
-
-    private void Prev()
-    {
-        if (currentPage > 1)
-        {
-            currentPage--;
-            targetPosition -= pageStep;
-            MovePage();
-        }
-    }
-
-    private void MovePage()
-    {
-        levelPagesRect.DOAnchorPos(targetPosition, tweenTime).SetEase(ease);
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        if (Mathf.Abs(eventData.position.x - eventData.pressPosition.x) > dragTreshould)
-        {
-            MovePage();
+            Open<ScrollLevelRightView>();
             return;
         }
 
-        var direction = eventData.position.x > eventData.pressPosition.x;
+        System.Action<IAmViewParameters> nextPageAction = currentPage is ScrollLevelLeftView ? Open<ScrollLevelRightView> : Open<ScrollLevelLeftView>;
 
-        Action action = direction ? Next : Prev;
-
-        action?.Invoke();
+        nextPageAction?.Invoke(null);
     }
 }

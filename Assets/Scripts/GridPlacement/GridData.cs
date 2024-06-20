@@ -59,5 +59,10 @@ namespace GridPlacement
 
             return true;
         }
+
+        public bool IsGridFilled()
+        {
+            return emptyPositions.Count == 0;
+        }
     }
 }

@@ -15,16 +15,10 @@ namespace Game.View
         private Button settingsButton;
         [SerializeField]
         private Button creditsButton;
+        [SerializeField]
+        private LevelSelectorView levelSelectorView;
 
         public override bool Absolute => false;
-
-        private MainMenuViewController mainMenuViewController;
-
-        [Inject]
-        private void Inject(MainMenuViewController mainMenuViewController)
-        {
-            this.mainMenuViewController = mainMenuViewController;
-        }
 
         protected override void Awake()
         {
@@ -52,7 +46,7 @@ namespace Game.View
 
         private void PlayButton_OnPerformed()
         {
-
+            ParentStack.TryPushSafe(levelSelectorView);
         }
 
         private void CreditsButton_OnPerformed()

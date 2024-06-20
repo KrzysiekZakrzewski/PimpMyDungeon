@@ -16,7 +16,7 @@ namespace Inputs
 
         private static void CreatePlayer()
         {
-            PlayerInput newPlayer = new PlayerInput();
+            PlayerInput newPlayer = new();
 
             playersLUT.Add(playersLUT.Count, newPlayer);
         }

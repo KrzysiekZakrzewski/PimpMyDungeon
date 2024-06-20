@@ -241,6 +241,7 @@ namespace Inputs
     {
         ButtonStarted,
         ButtonPressed,
-        ButtonUp
+        ButtonUp, 
+        Hold
     }
 }

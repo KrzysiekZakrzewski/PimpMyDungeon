@@ -28,6 +28,7 @@ namespace Item
         private bool isRotating;
         private bool isMoving;
         private bool onGrid;
+        private bool isDragging;
 
         public int RotationState => rotationState;
         public Vector2 Size => size;
@@ -43,6 +44,11 @@ namespace Item
                 return;
 
             Setup(itemData, placementSystem, gameObject.transform.position);
+        }
+
+        private void OnDestroy()
+        {
+            OnPointerUpE -= Rotate;
         }
 
         private void OnCorrectPlace()
@@ -69,6 +75,8 @@ namespace Item
             size = data.Size;
             itemPoints = data.ItemPoints;
             this.placementSystem = placementSystem;
+
+            OnPointerUpE += Rotate;
         }
 
         public void OnPlaced(Vector2Int gridPosition)
@@ -85,7 +93,9 @@ namespace Item
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if(!onGrid)
+            isDragging = true;
+
+            if (!onGrid)
                 placementSystem.StartPlacement(this);
             else
                 placementSystem.RemovePlacement(this);
@@ -93,18 +103,45 @@ namespace Item
 
         public void OnEndDrag(PointerEventData eventData)
         {
+#if UNITY_STANDALONE
             placementSystem.UnSubscribeRotateEvent(Rotate);
+#endif
+
             var isPlaced = placementSystem.OnPlaceItem(GridDetectorPoint.position, this);
 
             if (isPlaced)
                 OnCorrectPlace();
             else
                 OnWrongPlace();
+
+            isDragging = false;
         }
 
         public void Rotate(InputAction.CallbackContext callbackContext)
         {
             if (isRotating)
+                return;
+
+            isRotating = true;
+
+            rotationState++;
+
+            rotationState = rotationState >= 4 ? 0 : rotationState;
+
+            float angle = rotationState * -90f;
+
+            gameObject.transform.DORotate(new Vector3(0, 0, angle), 0.2f).OnComplete
+            (
+                () =>
+                {
+                    isRotating = false;
+                }
+            );
+        }
+
+        public void Rotate()
+        {
+            if (isRotating || isDragging || !IsAfterFirstTouch())
                 return;
 
             isRotating = true;

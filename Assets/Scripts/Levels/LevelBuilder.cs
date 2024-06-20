@@ -1,6 +1,7 @@
 ﻿using Extensions;
 using Generator.Data;
 using GridPlacement;
+using Inputs;
 using Item;
 using Levels.Data;
 using System;
@@ -8,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 using Zenject;
 
@@ -16,22 +18,17 @@ namespace Generator
     public class LevelBuilder : MonoBehaviour
     {
         [SerializeField]
-        private LevelDataSO levelDataSO;
-
-        [SerializeField]
-        private Tilemap floorTilemap, wallTilemap;
-
-        [SerializeField]
         private TileMapVisualizerDatabase database;
 
-        [SerializeField]
-        private Transform obstacleMagazine, itemMagazine;
+        private LevelDataSO levelDataSO;
 
         private readonly float extraBound = 0.2f;
         private readonly float baseWaitBuilder = 0.2f;
         private float waitBuilder = 0.1f;
 
         private bool skiped;
+        private bool isHolding;
+        private float holdDuration = 2f;
 
         private HashSet<Vector2Int> floorInHash;
         private HashSet<Vector2Int> obstaclesInHash;
@@ -39,6 +36,15 @@ namespace Generator
         private Camera currentCamera;
         private GridData gridData;
         private PlacementSystem placementSystem;
+        private Tilemap floorTilemap, wallTilemap;
+        private Transform obstacleMagazine, itemMagazine;
+
+        [NonSerialized]
+        private Inputs.PlayerInput playerInput;
+
+        public static event Action<float> HeldUpdateAction;
+        public static event Action StartHoldAction;
+        public static event Action EndHoldAction;
 
         [Inject]
         private void Inject(PlacementSystem placementSystem)
@@ -46,23 +52,26 @@ namespace Generator
             this.placementSystem = placementSystem;
         }
 
-        private void Awake()
+        private void Start()
         {
-            currentCamera = Camera.main;
+            playerInput = InputManager.GetPlayer(0);
+        }
 
+        private void ClearObjectives()
+        {
             objectsBounds = new List<Bounds>();
-            objectsBounds.Clear();
 
-            Vector3 cameraPosition = 
-                new(levelDataSO.CenterPoint.x, 
+            objectsBounds.Clear();
+        }
+
+        private void SetCameraPosition()
+        {
+            Vector3 cameraPosition =
+                new(levelDataSO.CenterPoint.x,
                 levelDataSO.CenterPoint.y,
                 currentCamera.transform.position.z);
 
             currentCamera.transform.position = cameraPosition;
-
-            StartCoroutine(BuildlevelSequence());
-
-            Skip();
         }
 
         private void PaintSingleBasicWall(Vector2Int position, string binaryType)
@@ -190,28 +199,86 @@ namespace Generator
         {
             floorTilemap.ClearAllTiles();
             wallTilemap.ClearAllTiles();
+
+            for (int i = obstacleMagazine.childCount - 1; i >= 0 ; i--)
+            {
+                var obstacle = obstacleMagazine.GetChild(i);
+
+                Destroy(obstacle.gameObject);
+            }
+
+            for (int i = itemMagazine.childCount - 1; i >= 0; i--)
+            {
+                var item = itemMagazine.GetChild(i);
+
+                Destroy(item.gameObject);
+            }
         }
 
-        private void Skip()
+        private void Skip(InputAction.CallbackContext callbackContext)
         {
             if (skiped)
                 return;
 
             skiped = true;
+            isHolding = false;
 
             waitBuilder = 0f;
+
+            EndHoldAction?.Invoke();
+        }
+
+        private void PrepeareToSkip(InputAction.CallbackContext callbackContext)
+        {
+            isHolding = true;
+
+            StartHoldAction?.Invoke();
+
+            StartCoroutine(HoldUpdate());
+        }
+        private void ResetSkip(InputAction.CallbackContext callbackContext)
+        {
+            isHolding = false;
+
+            EndHoldAction?.Invoke();
+        }
+
+        private IEnumerator HoldUpdate()
+        {
+            var holdTime = 0f;
+
+            while (isHolding)
+            {
+                yield return null;
+
+                holdTime += Time.deltaTime;
+
+                var value = holdTime / holdDuration;
+
+                HeldUpdateAction?.Invoke(value);
+            }
+        }
+
+        private bool CheckReferences()
+        {
+            return floorTilemap != null && wallTilemap != null && currentCamera != null;
         }
 
         #region Sequences
+
         private IEnumerator BuildlevelSequence()
         {
             floorInHash = new HashSet<Vector2Int>(levelDataSO.FloorPositions);
 
             waitBuilder = baseWaitBuilder;
 
+            StartCoroutine(GetCameraSequnce());
+
+            yield return new WaitUntil(CheckReferences);
+
             Clear();
 
-            yield return new WaitForSeconds(1f);
+            skiped = false;
 
             yield return StartCoroutine(PaintWalls());
             yield return StartCoroutine(PaintFloor());
@@ -220,6 +287,10 @@ namespace Generator
 
             gridData = new GridData(floorInHash, obstaclesInHash);
             placementSystem.SetupGridData(gridData);
+
+            playerInput.RemoveInputEventDelegate(Skip);
+            playerInput.RemoveInputEventDelegate(PrepeareToSkip);
+            playerInput.RemoveInputEventDelegate(ResetSkip);
         }
 
         private IEnumerator PaintFloor()
@@ -346,6 +417,40 @@ namespace Generator
 
             ResizeCamera(objectsArea);
         }
+
+        private IEnumerator GetCameraSequnce()
+        {
+            while(currentCamera == null)
+            {
+                currentCamera = Camera.main;
+
+                yield return null;
+            }
+
+            SetCameraPosition();
+        }
+
         #endregion
+
+        public void BuildLevel(LevelDataSO levelDataSO)
+        {
+            this.levelDataSO = levelDataSO;
+
+            ClearObjectives();
+
+            StartCoroutine(BuildlevelSequence());
+
+            playerInput.AddInputEventDelegate(PrepeareToSkip, InputActionEventType.ButtonStarted, InputUtilities.Skip);
+            playerInput.AddInputEventDelegate(ResetSkip, InputActionEventType.ButtonUp, InputUtilities.Skip);
+            playerInput.AddInputEventDelegate(Skip, InputActionEventType.ButtonPressed, InputUtilities.Skip);
+        }
+
+        public void SetupBuildReferences(Tilemap floorTilemap, Tilemap wallTilemap, Transform obstacleMagazine, Transform itemMagazine)
+        {
+            this.floorTilemap = floorTilemap;
+            this.wallTilemap = wallTilemap;
+            this.obstacleMagazine = obstacleMagazine;
+            this.itemMagazine = itemMagazine;
+        }
     } 
 }

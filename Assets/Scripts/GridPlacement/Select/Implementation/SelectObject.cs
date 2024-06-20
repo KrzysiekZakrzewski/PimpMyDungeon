@@ -1,5 +1,6 @@
 ﻿using MouseInteraction.Manager;
 using System;
+using UnityEngine;
 
 namespace MouseInteraction.Select
 {
@@ -9,17 +10,25 @@ namespace MouseInteraction.Select
         protected event Action OnDeselectE;
 
         private bool isSelected;
+        private bool isFirstTouch;
 
         public bool IsSelected => isSelected;
 
         protected virtual void OnEnable()
         {
+            OnPointerUpE += SetFirtstTouch;
             OnPointerDownE += Select;
         }
 
         protected virtual void OnDisable()
         {
             OnPointerDownE -= Select;
+            OnPointerUpE -= SetFirtstTouch;
+        }
+
+        private void SetFirtstTouch()
+        {
+            isFirstTouch = false;
         }
 
         public void Select()
@@ -28,6 +37,7 @@ namespace MouseInteraction.Select
                 return;
 
             isSelected = true;
+            isFirstTouch = true;
 
             SelectManager.Current.SetSelectedObject(this);
 
@@ -42,6 +52,11 @@ namespace MouseInteraction.Select
             isSelected = false;
 
             OnDeselectE?.Invoke();
+        }
+
+        public bool IsAfterFirstTouch()
+        {
+            return isSelected && !isFirstTouch;
         }
     }
 }

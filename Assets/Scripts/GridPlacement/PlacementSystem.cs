@@ -1,9 +1,11 @@
 using GridPlacement.PlaceState;
 using Inputs;
 using Item;
+using Levels;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace GridPlacement
 {
@@ -11,8 +13,6 @@ namespace GridPlacement
     {
         [SerializeField]
         private LayerMask placeableLayers;
-        [SerializeField]
-        private Grid grid;
         [SerializeField]
         private PreviewSystem previewSystem;
 
@@ -23,6 +23,14 @@ namespace GridPlacement
         private GridData gridData;
         private IPlacementState placeState;
         private Vector2Int lastChackedPosition;
+        private LevelManager levelManager;
+        private Grid grid;
+
+        [Inject]
+        private void Inject(LevelManager levelManager)
+        {
+            this.levelManager = levelManager;
+        }
 
         private void Start()
         {
@@ -75,7 +83,9 @@ namespace GridPlacement
 
             previewSystem.SetupPreview(placeState, item);
 
+#if UNITY_STANDALONE
             SubscribeRotateEvent(item.Rotate);
+#endif
         }
 
         public void RemovePlacement(PlaceableItem item)
@@ -128,6 +138,8 @@ namespace GridPlacement
 
             previewSystem.OffPreview();
 
+            levelManager.LevelCompleted(gridData.IsGridFilled());
+
             return true;
         }
 
@@ -157,6 +169,12 @@ namespace GridPlacement
             return (gridValue, true);
         }
 
+        public void InjectGrid(Grid grid)
+        {
+            this.grid = grid;
+        }
+
+#if UNITY_STANDALONE
         public void SubscribeRotateEvent(Action<InputAction.CallbackContext> action)
         {
             playerInput.AddInputEventDelegate(action, InputActionEventType.ButtonPressed, InputUtilities.Rotate);
@@ -166,5 +184,6 @@ namespace GridPlacement
         {
             playerInput.RemoveInputEventDelegate(action);
         }
+#endif
     }
 }

@@ -25,7 +25,7 @@ namespace Generator
 
         private void OnGUI()
         {
-            textField = EditorGUILayout.TextField("DLC name: ", textField);
+            textField = EditorGUILayout.TextField("Dungeon name: ", textField);
 
             if (GUILayout.Button("Generate Dungeon"))
             {

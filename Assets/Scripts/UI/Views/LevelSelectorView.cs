@@ -1,27 +1,18 @@
-using Game.SceneLoader;
 using UnityEngine;
+using ViewSystem;
 using ViewSystem.Implementation;
-using Zenject;
 
 public class LevelSelectorView : BasicView
 {
     [SerializeField]
-    private SceneDataSo gameScene;
+    private SwipeController swipeController;
 
     public override bool Absolute => false;
 
-    private MainMenuViewController mainMenuViewController;
-    private SceneLoadManagers sceneLoadManagers;
-
-    [Inject]
-    private void Inject(MainMenuViewController mainMenuViewController, SceneLoadManagers sceneLoadManagers)
+    public override void NavigateTo(IAmViewStackItem previousViewStackItem)
     {
-        this.mainMenuViewController = mainMenuViewController;
-        this.sceneLoadManagers = sceneLoadManagers;
-    }
+        base.NavigateTo(previousViewStackItem);
 
-    private void LoadSelectedLevel(int id)
-    {
-        sceneLoadManagers.LoadLocation(gameScene);
+        swipeController.SwipePage();
     }
 }
