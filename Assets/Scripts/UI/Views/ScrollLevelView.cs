@@ -1,3 +1,4 @@
+using Animation.DoTween;
 using Levels;
 using System;
 using ViewSystem;
@@ -8,6 +9,7 @@ public class ScrollLevelView : BasicView
 {
     private LevelButton[] pageButtons;
     private SwipeController swipeController;
+    private LevelLoadAnimation loadAnimation;
 
     private LevelManager levelManager;
 
@@ -15,6 +17,8 @@ public class ScrollLevelView : BasicView
 
     public void Init(SwipeController swipeController, LevelManager levelManager, Action<IAmViewPresentation> action)
     {
+        loadAnimation = GetComponent<LevelLoadAnimation>();
+
         this.swipeController = swipeController;
         this.levelManager = levelManager;
 
@@ -24,8 +28,13 @@ public class ScrollLevelView : BasicView
 
         for (int i = 0; i < pageButtons.Length; i++)
         {
-            pageButtons[i].SetupButton(levelManager.LoadLevel);
+            pageButtons[i].SetupButton(LoadLevel);
         }
+    }
+
+    private void LoadLevel(int levelId)
+    {
+        levelManager.LoadLevel(levelId, loadAnimation);
     }
 
     private void RefreshButtons()

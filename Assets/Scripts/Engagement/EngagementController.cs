@@ -3,6 +3,7 @@ using Game.SceneLoader;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Video;
+using Version;
 using Zenject;
 
 namespace Engagement
@@ -18,6 +19,8 @@ namespace Engagement
         private float delayTime;
 
         private SceneLoadManagers sceneLoadManagers;
+        private AdsManager adsManager;
+        private SaveValidator saveValidator;
         private bool isInitialized;
 
         #region VideoPrivateVerbs
@@ -27,9 +30,11 @@ namespace Engagement
         #endregion
 
         [Inject]
-        private void Inject(SceneLoadManagers sceneLoadManagers)
+        private void Inject(SceneLoadManagers sceneLoadManagers, AdsManager adsManager, SaveValidator saveValidator)
         {
             this.sceneLoadManagers = sceneLoadManagers;
+            this.adsManager = adsManager;
+            this.saveValidator = saveValidator;
         }
 
         private void Awake()
@@ -65,6 +70,10 @@ namespace Engagement
 
             StartCoroutine(PlayVideoWithDelay());
 
+            adsManager.InitializeAds();
+
+            saveValidator.ValidateLevelSaveData();
+
             yield return new WaitUntil(CheckEngagemntWasFinished);
 
             var engagement = bootUIController.GetEngagementView();
@@ -76,7 +85,7 @@ namespace Engagement
 
         private bool CheckEngagemntWasFinished()
         {
-            return videoEnded;
+            return videoEnded && adsManager.InitializeFinished;
         }
 
         public void FinishEngagement()

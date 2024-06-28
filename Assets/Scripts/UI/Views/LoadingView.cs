@@ -1,8 +1,12 @@
+using DG.Tweening;
 using Game.SceneLoader;
 using Inputs;
+using Loading.Data;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using ViewSystem;
 using ViewSystem.Implementation;
 using Zenject;
@@ -13,6 +17,18 @@ namespace Game.View
     {
         [SerializeField]
         private Camera loadingViewCamera;
+        [SerializeField]
+        private TextMeshProUGUI hintText;
+        [SerializeField]
+        private Image backgroundImage;
+        [SerializeField]
+        private TextMeshProUGUI continueText;
+        [SerializeField]
+        private float changeTextDuration;
+
+        private Sequence changeTextSequnce;
+
+        private Color transparentColor = new(1f,1f,1f,0f);
 
         private SceneLoadManagers sceneLoadManagers;
 
@@ -34,6 +50,8 @@ namespace Game.View
             base.Awake();
 
             playerInput = InputManager.GetPlayer(0);
+
+            CreateSequence();
         }
 
         protected override void OnDestroy()
@@ -52,6 +70,24 @@ namespace Game.View
             loadingViewCamera.gameObject.SetActive(true);
         }
 
+        private void Continue_OnPerformed(InputAction.CallbackContext callback)
+        {
+            sceneLoadManagers.OpenScenes();
+        }
+
+        private void CreateSequence()
+        {
+            changeTextSequnce = DOTween.Sequence();
+
+            changeTextSequnce.SetAutoKill(false);
+
+            changeTextSequnce.Append(hintText.DOFade(0f, changeTextDuration));
+
+            changeTextSequnce.Append(continueText.DOFade(1f, changeTextDuration));
+
+            changeTextSequnce.Rewind();
+        }
+
         public override void NavigateTo(IAmViewStackItem previousViewStackItem)
         {
             base.NavigateTo(previousViewStackItem);
@@ -68,13 +104,20 @@ namespace Game.View
             loadingViewCamera.gameObject.SetActive(false);
         }
 
-        private void Continue_OnPerformed(InputAction.CallbackContext callback)
-        {
-            sceneLoadManagers.OpenScenes();
-        }
-
         public void ShowContinueText()
         {
+            changeTextSequnce.Play();
+        }
+
+        public void SetupLoadingScreen(string hint, Sprite background)
+        {
+            continueText.color = transparentColor;
+            hintText.color = transparentColor;
+            hintText.text = hint;
+            backgroundImage.sprite = background;
+            hintText.DOFade(1f, 1f);
+
+            changeTextSequnce.Rewind();
         }
     }
 }

@@ -234,6 +234,7 @@ PlayerSettings:
   iOSMetalForceHardShadows: 0
   metalEditorSupport: 1
   metalAPIValidation: 1
+  metalCompileShaderBinary: 0
   iOSRenderExtraFrameOnPause: 0
   iosCopyPluginsCodeInsteadOfSymlink: 0
   appleDeveloperTeamID: 
@@ -784,7 +785,7 @@ PlayerSettings:
   cloudProjectId: 9808e9de-2294-46f6-a2a2-00e21081e7da
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: SortBlocks
+  projectName: PimpMyDungeon
   organizationId: perpankris
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0

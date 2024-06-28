@@ -7,12 +7,12 @@ namespace Saves
 {
     public static class SaveManager
     {
-        private static SaveData saveData;
+        private static SaveData SaveData => AssetsGetter.GetAsset<SaveData>();
+        private static SaveManagerSettings Settiings => AssetsGetter.GetAsset<SaveManagerSettings>();
 
         private static List<ISaveListener> saveListeners = new List<ISaveListener>();
         private static List<ILoadListener> loadListeners = new List<ILoadListener>();
 
-        private static SaveManagerSettings settiings;
         private static IEncryptionOption encryption;
 
         private static Dictionary<string, SaveObject> SaveDataLUT { get; set; }
@@ -35,8 +35,6 @@ namespace Saves
         {
             if (IsInitialized) return;
 
-            settiings = AssetsGetter.GetAsset<SaveManagerSettings>();
-            saveData = AssetsGetter.GetAsset<SaveData>();
             encryption = CreateEncryptionMethod();
 
             if (!encryption.FileExist())
@@ -44,7 +42,11 @@ namespace Saves
 
             TryGenerateSaveLookup();
 
+            Debug.Log("LUT" + LoadedDataLUT.ToList().Count);
+
             LoadedDataLUT = LoadFromFile();
+
+            Debug.Log("LUTA" + LoadedDataLUT.ToList().Count);
 
             foreach (var saveValue in SaveDataLUT.ToList())
             {
@@ -57,7 +59,7 @@ namespace Saves
 
         private static IEncryptionOption CreateEncryptionMethod()
         {
-            return settiings.EncryptionOptionFactorySO.CreateEncryption(settiings.SavePath);
+            return Settiings.EncryptionOptionFactorySO.CreateEncryption(Settiings.SavePath);
         }
 
         private static void SaveToFile(SerializableDictionary<string, SerializableDictionary<string, string>> data)
@@ -79,13 +81,15 @@ namespace Saves
 
             SaveDataLUT = new Dictionary<string, SaveObject>();
 
-            foreach (var saveValue in saveData.Data)
+            foreach (var saveValue in SaveData.Data)
             {
                 if (SaveDataLUT.ContainsKey(saveValue.SaveKey))
                     SaveDataLUT[saveValue.SaveKey] = saveValue;
                 else
                     SaveDataLUT.Add(saveValue.SaveKey, saveValue);
             }
+
+            Debug.Log("save" + SaveDataLUT.Count + " " + SaveData.Data.Count);
         }
 
         private static void CallSaveListeners(bool saveCalled)
@@ -211,7 +215,7 @@ namespace Saves
 
 
             LoadedDataLUT[objectKey].Remove(valueKey);
-            SaveToFile(saveData.SerializableData);
+            SaveToFile(SaveData.SerializableData);
             return true;
         }
 
@@ -268,7 +272,7 @@ namespace Saves
                 RegisterObject(saveValue);
             }
 
-            SaveToFile(saveData.SerializableData);
+            SaveToFile(SaveData.SerializableData);
             IsSaving = false;
 
             if (callListeners)
@@ -288,7 +292,7 @@ namespace Saves
 
             var loadedData = data ?? LoadFromFile();
 
-            if (saveData != null)
+            if (SaveData != null)
             {
                 LoadedDataLUT = loadedData;
             }
@@ -320,7 +324,9 @@ namespace Saves
 
             if (keys.Count <= 0) return;
 
-            foreach (var saveObject in saveData.Data)
+            Debug.Log("4");
+
+            foreach (var saveObject in SaveData.Data)
             {
                 if (keys.Contains(saveObject.SaveKey))
                 {
@@ -353,7 +359,7 @@ namespace Saves
                 }
             }
 
-            SaveToFile(saveData.SerializableData);
+            SaveToFile(SaveData.SerializableData);
         }
     }
 }

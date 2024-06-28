@@ -1,9 +1,7 @@
 using ViewSystem;
 using ViewSystem.Implementation;
-using Zenject;
 using UnityEngine;
 using UnityEngine.UI;
-using Game.SceneLoader;
 
 namespace Game.View
 {

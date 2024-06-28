@@ -7,6 +7,9 @@ using UnityEngine.UI;
 public class LevelButton : MonoBehaviour
 {
     [SerializeField]
+    private Button levelButton;
+
+    [SerializeField]
     private TextMeshProUGUI numberTxt;
 
     [SerializeField]
@@ -19,7 +22,6 @@ public class LevelButton : MonoBehaviour
     private Image starImage;
 
     private int levelId;
-    private Button levelButton;
 
     private void Awake()
     {

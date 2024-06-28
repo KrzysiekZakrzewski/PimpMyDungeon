@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: SimpleDungeonGenerator
   m_EditorClassIdentifier: 
   <Iterations>k__BackingField: 10
-  <WalkLength>k__BackingField: 5
+  <WalkLength>k__BackingField: 8
   <StartRandomlyEachIteration>k__BackingField: 0
   <PlaceItem>k__BackingField:
-  - <MaxItemAmount>k__BackingField: 1
-    <ItemData>k__BackingField: {fileID: 11400000, guid: 336cf844449be1c4fade42c8c3909f8f, type: 2}
+  - <MaxItemAmount>k__BackingField: 3
+    <ItemData>k__BackingField: {fileID: 11400000, guid: 7139bb2f1aa27dd459de0fc103578471, type: 2}
   - <MaxItemAmount>k__BackingField: 2
     <ItemData>k__BackingField: {fileID: 11400000, guid: 0324bde28dc758e44a380c3f9b881977, type: 2}
+  - <MaxItemAmount>k__BackingField: 2
+    <ItemData>k__BackingField: {fileID: 11400000, guid: 336cf844449be1c4fade42c8c3909f8f, type: 2}
   <ObstacleItemDatabase>k__BackingField: {fileID: 11400000, guid: 6db3208f35dd4a44294b0ba228b20490, type: 2}

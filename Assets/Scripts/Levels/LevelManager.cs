@@ -8,6 +8,9 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
 using Inputs;
+using Version;
+using System.Collections;
+using Animation.DoTween;
 
 namespace Levels
 {
@@ -24,34 +27,16 @@ namespace Levels
 
         private LevelsDatabaseSO levelDatabase;
         private SceneLoadManagers sceneLoadManagers;
-
-        private LevelSaveObject saveObject;
+        private SaveValidator saveValidator;
 
         public static event Action LevelCompletedEvent;
 
         [Inject]
-        private void Inject(SceneLoadManagers sceneLoadManagers, LevelsDatabaseSO levelDatabase)
+        private void Inject(SceneLoadManagers sceneLoadManagers, LevelsDatabaseSO levelDatabase, SaveValidator saveValidator)
         {
             this.sceneLoadManagers = sceneLoadManagers;
             this.levelDatabase = levelDatabase;
-        }
-
-        private void Awake()
-        {
-            GetSaveObject();
-        }
-
-        private void GetSaveObject()
-        {
-            var result = SaveManager.TryGetSaveObject(out saveObject);
-
-            if (!result)
-                return;
-        }
-
-        private int GetLastUnlockedLevel()
-        {
-            return saveObject.GetValue<int>(SaveKeyUtilities.LastUnlockedLevelKey).Value;
+            this.saveValidator = saveValidator;
         }
 
         private LevelDataSO GetLevelData(int levelId)
@@ -71,16 +56,20 @@ namespace Levels
             if (!isGridFilled)
                 return;
 
+            saveValidator.UnlockLevel(currentLevelId);
+
+            saveValidator.UpdateCompletedLevelData(currentLevelId, false);
+
             LevelCompletedEvent?.Invoke();
         }
 
-        public void LoadLevel(int levelId)
+        public void LoadLevel(int levelId, LevelLoadAnimation loadAnimation)
         {
             currentLevelId = levelId;
 
             sceneLoadManagers.OnSceneChanged += BuildLevelAfterLoadScene;
 
-            sceneLoadManagers.LoadLocation(gameScene);
+            loadAnimation.PlayAnimation(() => sceneLoadManagers.LoadLocation(gameScene));
         }
 
         public int GetLevelsCount()
@@ -112,22 +101,12 @@ namespace Levels
 
         public bool CheckLevelUnlocked(int levelId)
         {
-            if(levelId > GetLastUnlockedLevel())
-                return false;
-
-            return true;
+            return saveValidator.CheckLevelUnlocked(levelId);
         }
 
         public bool CheckStartReached(int levelId)
         {
-            if(levelId > GetLastUnlockedLevel())
-                return false;
-
-            var levels = saveObject.GetValue<SerializedDictionary<int, LevelSaveData>>(SaveKeyUtilities.SavedLevelsKey).Value;
-
-            levels.TryGetValue(levelId, out var level);
-
-            return level.starReached;
+            return saveValidator.CheckStartReached(levelId);
         }
     }
 }

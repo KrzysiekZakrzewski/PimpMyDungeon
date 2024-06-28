@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 7165333870617833794}
   - component: {fileID: 2779680474759261160}
   - component: {fileID: 371062952548805645}
+  - component: {fileID: 5809439046243001229}
   m_Layer: 5
   m_Name: Page
   m_TagString: Untagged
@@ -181,6 +182,24 @@ MonoBehaviour:
   tweenDuration: 0.75
   ease: 9
   rectTransform: {fileID: 8589122057159556289}
+--- !u!114 &5809439046243001229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 30022616836263760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34918182cb705aa4ab98dcf8285af62b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items: []
+  minDaleyBetween: 0.05
+  maxDaleyBetween: 0.15
+  minRotateAngle: -25
+  maxRotateAngle: 25
+  shakeDuration: 0.3
 --- !u!1001 &191868379167346423
 PrefabInstance:
   m_ObjectHideFlags: 0

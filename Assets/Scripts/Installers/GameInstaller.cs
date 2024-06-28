@@ -2,7 +2,9 @@ using Game.SceneLoader;
 using GridPlacement;
 using Levels;
 using Levels.Data;
+using System.Net.NetworkInformation;
 using UnityEngine;
+using Version;
 using Zenject;
 
 namespace Game.Installer
@@ -17,6 +19,10 @@ namespace Game.Installer
         private PlacementSystem placementSystem;
         [SerializeField]
         private LevelManager levelManager;
+        [SerializeField]
+        private AdsManager adsManager;
+        [SerializeField]
+        private SaveValidator saveValidator;
 
         public override void InstallBindings()
         {
@@ -24,6 +30,8 @@ namespace Game.Installer
             Container.BindInstance(levelsDatabaseSO).AsSingle();
             Container.BindInstance(placementSystem).AsSingle();
             Container.BindInstance(levelManager).AsSingle();
+            Container.BindInstance(adsManager).AsSingle();
+            Container.BindInstance(saveValidator).AsSingle();
         }
     }
 }

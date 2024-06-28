@@ -13,5 +13,9 @@ MonoBehaviour:
   m_Name: ObstacleDatabase
   m_EditorClassIdentifier: 
   <ObstacleItems>k__BackingField:
+  - {fileID: 11400000, guid: 8df3a9891fb291c4081ee035eda34cef, type: 2}
+  - {fileID: 11400000, guid: 257fb821a78827f478e6fb0a24af910a, type: 2}
+  - {fileID: 11400000, guid: 9dd1f10b44ab83442886cb33b517d546, type: 2}
   - {fileID: 11400000, guid: 14cfb923b24894e44951b701518f3699, type: 2}
+  - {fileID: 11400000, guid: dcaa097136ca1cb4dbbacd004a558834, type: 2}
   - {fileID: 11400000, guid: 03c28f9582efc0f48abbc6748b5389eb, type: 2}

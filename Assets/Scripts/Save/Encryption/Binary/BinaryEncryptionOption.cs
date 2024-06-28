@@ -1,6 +1,7 @@
 using Saves.Serializiation;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine;
 
 namespace Saves
 {
@@ -33,13 +34,17 @@ namespace Saves
 
             FileStream stream = new FileStream(savePath, FileMode.Open);
 
-            SerializableDictionary<string, SerializableDictionary<string, string>> data = (SerializableDictionary<string, SerializableDictionary<string, string>>)formatter.Deserialize(stream);
+            string data = (string)formatter.Deserialize(stream);
+
+            var result = JsonUtility.FromJson<SerializableDictionary<string, SerializableDictionary<string, string>>>(data);
+
+            Debug.Log(result.Count + "L");
 
             stream.Close();
 
-            SaveManager.ProcessLoadedData(data);
+            SaveManager.ProcessLoadedData(result);
 
-            return data;
+            return result;
         }
 
         public void Save(object data)
@@ -48,7 +53,9 @@ namespace Saves
 
             FileStream stream = new FileStream(savePath, FileMode.Create);
 
-            formatter.Serialize(stream, data);
+            string savePlayerData = JsonUtility.ToJson(data);
+
+            formatter.Serialize(stream, savePlayerData);
 
             stream.Close();
         }

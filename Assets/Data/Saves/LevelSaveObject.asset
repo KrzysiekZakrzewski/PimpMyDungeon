@@ -20,7 +20,43 @@ MonoBehaviour:
       pairs:
       - key: 0
         value:
-          levelId: 0
+          isUnlocked: 1
+          isCompleted: 0
+          starReached: 0
+      - key: 1
+        value:
+          isUnlocked: 0
+          isCompleted: 0
+          starReached: 0
+      - key: 2
+        value:
+          isUnlocked: 0
+          isCompleted: 0
+          starReached: 0
+      - key: 3
+        value:
+          isUnlocked: 0
+          isCompleted: 0
+          starReached: 0
+      - key: 4
+        value:
+          isUnlocked: 0
+          isCompleted: 0
+          starReached: 0
+      - key: 5
+        value:
+          isUnlocked: 0
+          isCompleted: 0
+          starReached: 0
+      - key: 6
+        value:
+          isUnlocked: 0
+          isCompleted: 0
+          starReached: 0
+      - key: 7
+        value:
+          isUnlocked: 0
+          isCompleted: 0
           starReached: 0
       error: 0
   LastUnlockedLevel:
