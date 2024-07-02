@@ -9,8 +9,12 @@ namespace Audio.Manager
         [SerializeField]
         [Range(0f, 1f)]
         private float masterVolume = 1f;
+
         [SerializeField]
         private SoundCollectionSO soundCollectionSO;
+
+        [SerializeField]
+        private AudioMixer audioMixer;
 
         [SerializeField]
         private AudioMixerGroup musicMixerGroup;
@@ -19,9 +23,15 @@ namespace Audio.Manager
 
         private AudioSource currentMusic;
 
+        float maxLevel = 0f;
+        float minLevel = -80f;
+
+        private readonly string musicVolumeKey = "Music";
+        private readonly string sfxVolumeKey = "SFX";
+
         private void PlayRandomSound(SoundSO[] sounds)
         {
-            if(sounds == null || sounds.Length == 0)
+            if (sounds == null || sounds.Length == 0)
                 return;
 
             SoundSO soundSO = sounds[Random.Range(0,sounds.Length)];
@@ -97,6 +107,48 @@ namespace Audio.Manager
                 default: 
                     return null;
             }
+        }
+
+        private string GetAudioKeyName(AudioTypes audioType)
+        {
+            switch (audioType)
+            {
+                case AudioTypes.SFX:
+                    return sfxVolumeKey;
+                case AudioTypes.Music:
+                    return musicVolumeKey;
+                default:
+                    return null;
+            }
+        }
+
+        public bool SetSoundGroupMuted(AudioTypes audioType)
+        {
+            var key = GetAudioKeyName(audioType);
+
+            audioMixer.GetFloat(key, out float volume);
+
+            volume = volume == minLevel ? maxLevel : minLevel;
+
+            audioMixer.SetFloat(key, volume);
+
+            return volume == minLevel;
+        }
+
+        public void SetSoundGroupMuted(AudioTypes audioType, bool isMuted)
+        {
+            var key = GetAudioKeyName(audioType);
+
+            float volume = isMuted ? minLevel : maxLevel;
+
+            Debug.Log(volume);
+
+            audioMixer.SetFloat(key, volume);
+        }
+
+        public void Play(SoundSO soundDataSO)
+        {
+            SoundToPlay(soundDataSO);
         }
     }
 }

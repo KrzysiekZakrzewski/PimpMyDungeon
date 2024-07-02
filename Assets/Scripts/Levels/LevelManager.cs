@@ -1,16 +1,12 @@
 using Game.SceneLoader;
 using Generator;
 using Levels.Data;
-using Saves.Object;
-using Saves;
 using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
-using Inputs;
-using Version;
-using System.Collections;
 using Animation.DoTween;
+using Saves;
 
 namespace Levels
 {
@@ -30,6 +26,8 @@ namespace Levels
         private SaveValidator saveValidator;
 
         public static event Action LevelCompletedEvent;
+
+        public static bool IsPaused { private set; get; }
 
         [Inject]
         private void Inject(SceneLoadManagers sceneLoadManagers, LevelsDatabaseSO levelDatabase, SaveValidator saveValidator)
@@ -51,6 +49,20 @@ namespace Levels
             levelBuilder.BuildLevel(GetLevelData(currentLevelId));
         }
 
+        public void PauseGame()
+        {
+            IsPaused = true;
+
+            Time.timeScale = 0.0f;
+        }
+
+        public void UnPauseGame()
+        {
+            IsPaused = false;
+
+            Time.timeScale = 1.0f;
+        }
+
         public void LevelCompleted(bool isGridFilled)
         {
             if (!isGridFilled)
@@ -59,6 +71,8 @@ namespace Levels
             saveValidator.UnlockLevel(currentLevelId);
 
             saveValidator.UpdateCompletedLevelData(currentLevelId, false);
+
+            saveValidator.SaveData();
 
             LevelCompletedEvent?.Invoke();
         }
@@ -102,6 +116,11 @@ namespace Levels
         public bool CheckLevelUnlocked(int levelId)
         {
             return saveValidator.CheckLevelUnlocked(levelId);
+        }
+
+        public bool CheckLevelCompleted(int levelId)
+        {
+            return saveValidator.CheckLevelCompleted(levelId);
         }
 
         public bool CheckStartReached(int levelId)

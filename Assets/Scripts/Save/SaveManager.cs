@@ -42,11 +42,7 @@ namespace Saves
 
             TryGenerateSaveLookup();
 
-            Debug.Log("LUT" + LoadedDataLUT.ToList().Count);
-
             LoadedDataLUT = LoadFromFile();
-
-            Debug.Log("LUTA" + LoadedDataLUT.ToList().Count);
 
             foreach (var saveValue in SaveDataLUT.ToList())
             {
@@ -88,8 +84,6 @@ namespace Saves
                 else
                     SaveDataLUT.Add(saveValue.SaveKey, saveValue);
             }
-
-            Debug.Log("save" + SaveDataLUT.Count + " " + SaveData.Data.Count);
         }
 
         private static void CallSaveListeners(bool saveCalled)
@@ -323,8 +317,6 @@ namespace Saves
             var keys = serializableDictionary.Keys.ToList();
 
             if (keys.Count <= 0) return;
-
-            Debug.Log("4");
 
             foreach (var saveObject in SaveData.Data)
             {

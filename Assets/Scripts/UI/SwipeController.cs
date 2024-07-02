@@ -1,4 +1,5 @@
 using Levels;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using ViewSystem;
@@ -86,6 +87,18 @@ public class SwipeController : SingleViewTypeStackController
         PageId--;
 
         SwipePage();
+    }
+
+    public void ForceOpen()
+    {
+        Open<ScrollLevelRightView>();
+    }
+
+    public void Close()
+    {
+        var currentPage = Peek();
+
+        currentPage.ParentStack.TryPopSafe();
     }
 
     public void SwipePage()

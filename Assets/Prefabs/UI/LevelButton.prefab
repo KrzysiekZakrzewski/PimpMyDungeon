@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -105,7 +105,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -142,6 +142,7 @@ MonoBehaviour:
   completedSprite: {fileID: -1671697380, guid: 0a108be6552495e4b93afc697d03805f, type: 3}
   lockedImage: {fileID: 8398720350846987913}
   starImage: {fileID: 8245609422164451575}
+  noStarReachedMaterial: {fileID: 2100000, guid: 24126f4499543464b9c379f71264a4b4, type: 2}
 --- !u!1 &5905246399423333678
 GameObject:
   m_ObjectHideFlags: 0

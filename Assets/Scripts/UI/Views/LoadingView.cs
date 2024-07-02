@@ -106,6 +106,8 @@ namespace Game.View
 
         public void ShowContinueText()
         {
+            hintText.DOKill();
+
             changeTextSequnce.Play();
         }
 

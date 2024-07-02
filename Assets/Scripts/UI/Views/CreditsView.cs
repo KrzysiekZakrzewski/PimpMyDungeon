@@ -1,35 +1,25 @@
-
-using ViewSystem;
 using ViewSystem.Implementation;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.View
 {
     public class CreditsView : BasicView
     {
+        [SerializeField]
+        private Button backButton;
+
         public override bool Absolute => false;
 
         protected override void Awake()
         {
             base.Awake();
+            backButton.onClick.AddListener(OnClickBackPerformed);
         }
 
-        private void SettingsButton_OnPerformed()
+        private void OnClickBackPerformed()
         {
             ParentStack.TryPopSafe();
-        }
-
-        protected override void Presentation_OnShowPresentationComplete(IAmViewPresentation presentation)
-        {
-            base.Presentation_OnShowPresentationComplete(presentation);
-        }
-
-        public override void NavigateTo(IAmViewStackItem previousViewStackItem)
-        {
-            base.NavigateTo(previousViewStackItem);
-        }
-        public override void NavigateFrom(IAmViewStackItem nextViewStackItem)
-        {
-            base.NavigateFrom(nextViewStackItem);
         }
     }
 }

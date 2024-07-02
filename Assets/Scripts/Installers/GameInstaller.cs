@@ -1,10 +1,11 @@
+using Audio.Manager;
 using Game.SceneLoader;
 using GridPlacement;
 using Levels;
 using Levels.Data;
-using System.Net.NetworkInformation;
+using Saves;
+using Settings;
 using UnityEngine;
-using Version;
 using Zenject;
 
 namespace Game.Installer
@@ -23,6 +24,10 @@ namespace Game.Installer
         private AdsManager adsManager;
         [SerializeField]
         private SaveValidator saveValidator;
+        [SerializeField]
+        private SettingsManager settingsManager;
+        [SerializeField]
+        private AudioManager audioManager;
 
         public override void InstallBindings()
         {
@@ -32,6 +37,8 @@ namespace Game.Installer
             Container.BindInstance(levelManager).AsSingle();
             Container.BindInstance(adsManager).AsSingle();
             Container.BindInstance(saveValidator).AsSingle();
+            Container.BindInstance(settingsManager).AsSingle();
+            Container.BindInstance(audioManager).AsSingle();
         }
     }
 }

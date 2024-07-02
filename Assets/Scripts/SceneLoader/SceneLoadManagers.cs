@@ -167,8 +167,6 @@ namespace Game.SceneLoader
                 loadedLocationRelatedScenes.Add(relatedSceneName);
             }
 
-            yield return new WaitForSeconds(1f);
-
             loadingViewController.OnLoadingCompleted(locationSceneDataSo.WaitForKey);
 
             OnSceneLoaded?.Invoke();

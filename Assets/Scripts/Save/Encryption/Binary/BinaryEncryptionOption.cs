@@ -38,8 +38,6 @@ namespace Saves
 
             var result = JsonUtility.FromJson<SerializableDictionary<string, SerializableDictionary<string, string>>>(data);
 
-            Debug.Log(result.Count + "L");
-
             stream.Close();
 
             SaveManager.ProcessLoadedData(result);

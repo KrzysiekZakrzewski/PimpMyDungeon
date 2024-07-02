@@ -1,9 +1,10 @@
 using Engagement.UI;
 using Game.SceneLoader;
+using Saves;
+using Settings;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Video;
-using Version;
 using Zenject;
 
 namespace Engagement
@@ -21,6 +22,7 @@ namespace Engagement
         private SceneLoadManagers sceneLoadManagers;
         private AdsManager adsManager;
         private SaveValidator saveValidator;
+        private SettingsManager settingsManager;
         private bool isInitialized;
 
         #region VideoPrivateVerbs
@@ -30,11 +32,12 @@ namespace Engagement
         #endregion
 
         [Inject]
-        private void Inject(SceneLoadManagers sceneLoadManagers, AdsManager adsManager, SaveValidator saveValidator)
+        private void Inject(SceneLoadManagers sceneLoadManagers, AdsManager adsManager, SaveValidator saveValidator, SettingsManager settingsManager)
         {
             this.sceneLoadManagers = sceneLoadManagers;
             this.adsManager = adsManager;
             this.saveValidator = saveValidator;
+            this.settingsManager = settingsManager;
         }
 
         private void Awake()
@@ -72,7 +75,8 @@ namespace Engagement
 
             adsManager.InitializeAds();
 
-            saveValidator.ValidateLevelSaveData();
+            saveValidator.PrepeareSaveData();
+            settingsManager.LoadSettings();
 
             yield return new WaitUntil(CheckEngagemntWasFinished);
 

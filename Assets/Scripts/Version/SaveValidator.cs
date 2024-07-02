@@ -1,11 +1,11 @@
 ﻿using Levels.Data;
 using Saves;
 using Saves.Object;
-using TMPro;
+using Settings;
 using UnityEngine;
 using Zenject;
 
-namespace Version
+namespace Saves
 {
     public class SaveValidator : MonoBehaviour
     {
@@ -49,7 +49,7 @@ namespace Version
             SaveLevelData();
         }
 
-        private void SaveLevelData()
+        private void UpdateLastLevelUnlocked()
         {
             var lastUnlockedLevel = 0;
 
@@ -62,6 +62,11 @@ namespace Version
             }
 
             levelSaveObject.SetValue(SaveKeyUtilities.LastUnlockedLevelKey, lastUnlockedLevel);
+        }
+
+        private void SaveLevelData()
+        {
+            UpdateLastLevelUnlocked();
 
             levelSaveObject.SetValue(SaveKeyUtilities.SavedLevelsKey, saveLevelDatabase);
         }
@@ -83,7 +88,7 @@ namespace Version
             SaveLevelData();
         }
 
-        public void ValidateLevelSaveData()
+        private void ValidateSaveData()
         {
             GetSaveObject();
 
@@ -97,6 +102,11 @@ namespace Version
                 return;
 
             UpdateSaveData();
+        }
+
+        public void PrepeareSaveData()
+        {
+            ValidateSaveData();
         }
 
         public void UpdateCompletedLevelData(int levelId, bool starReached)
@@ -117,6 +127,8 @@ namespace Version
                 return;
 
             levelData.UnlockLevel();
+
+            UpdateLastLevelUnlocked();
         }
 
         public bool CheckLevelUnlocked(int levelId)
@@ -127,6 +139,16 @@ namespace Version
             return true;
         }
 
+        public bool CheckLevelCompleted(int levelId)
+        {
+            if (levelId > GetLastUnlockedLevel())
+                return false;
+
+            saveLevelDatabase.TryGetValue(levelId, out var level);
+
+            return level.isCompleted;
+        }
+
         public bool CheckStartReached(int levelId)
         {
             if (levelId > GetLastUnlockedLevel())
@@ -135,6 +157,18 @@ namespace Version
             saveLevelDatabase.TryGetValue(levelId, out var level);
 
             return level.starReached;
+        }
+
+        public void SaveData()
+        {
+            SaveLevelData();
+
+            SaveManager.Save();
+        }
+
+        public void OnApplicationQuit()
+        {
+            SaveData();
         }
     }
 }

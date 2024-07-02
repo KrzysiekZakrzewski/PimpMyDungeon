@@ -15,6 +15,9 @@ public class LevelCompletedView : BasicView
     [SerializeField]
     private Button restartLevelButton;
 
+    [SerializeField]
+    private Material noStarMaterial;
+
     public override bool Absolute => false;
 
     private LevelManager levelManager;

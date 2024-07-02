@@ -9,9 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1cb91f9aa257387468b7b43a78d52f6f, type: 3}
-  m_Name: SaveData
+  m_Script: {fileID: 11500000, guid: 3d166a9fc755e004c93610b327e101a1, type: 3}
+  m_Name: SoundCollectionSO
   m_EditorClassIdentifier: 
-  saveData:
-  - {fileID: 11400000, guid: 73e774b5d7f5041459b0efaec4e4dea2, type: 2}
-  - {fileID: 11400000, guid: 58f34cd75d95e0441a7cdce0ce51305e, type: 2}

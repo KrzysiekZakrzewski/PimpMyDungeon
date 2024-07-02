@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Levels;
 using TMPro;
 using UnityEngine;
@@ -21,16 +22,75 @@ public class LevelButton : MonoBehaviour
     [SerializeField]
     private Image starImage;
 
+    [SerializeField]
+    private Material noStarReachedMaterial;
+
     private int levelId;
+
+    private bool isUnlocked;
+    private bool isCompleted;
+    private RectTransform rectTransform;
+    private Image levelButtonIcon;
 
     private void Awake()
     {
         levelButton = GetComponent<Button>();
+        levelButtonIcon = levelButton.image;
+        rectTransform = levelButtonIcon.rectTransform;
+    }
+
+    private void LockedAnimation()
+    {
+        rectTransform.DOKill();
+
+        rectTransform.DOShakePosition(0.5f, 2f);
+    }
+
+    private void OnClickPerformed(UnityAction<int> buttonEvent)
+    {
+        if (!isUnlocked)
+        {
+            LockedAnimation();
+            return;
+        }
+
+        buttonEvent?.Invoke(levelId);
+    }
+
+    private void CheckUnlocked(int levelId, LevelManager levelManager)
+    {
+        isUnlocked = levelManager.CheckLevelUnlocked(levelId);
+
+        lockedImage.gameObject.SetActive(!isUnlocked);
+    }
+
+    private void CheckCompleted(int levelId, LevelManager levelManager)
+    {
+        isCompleted = levelManager.CheckLevelCompleted(levelId);
+
+        levelButtonIcon.sprite = isCompleted ? completedSprite : normalSprite;
+    }
+
+    private void CheckStarReached(int levelId, LevelManager levelManager)
+    {
+        if (!isCompleted)
+        {
+            starImage.material = noStarReachedMaterial;
+            starImage.gameObject.SetActive(false);
+            return;
+        }
+
+        if (!starImage.gameObject.activeSelf)
+            starImage.gameObject.SetActive(true);
+
+        var starReached = levelManager.CheckStartReached(levelId);
+
+        starImage.material = starReached ? null : noStarReachedMaterial;
     }
 
     public void SetupButton(UnityAction<int> buttonEvent)
     {
-        levelButton.onClick.AddListener(() => buttonEvent?.Invoke(levelId));
+        levelButton.onClick.AddListener(() => OnClickPerformed(buttonEvent));
     }
 
     public void RefreshButton(int levelId, LevelManager levelManager)
@@ -39,18 +99,10 @@ public class LevelButton : MonoBehaviour
 
         numberTxt.text = (levelId + 1).ToString();
 
-        var isUnlocked = levelManager.CheckLevelUnlocked(levelId);
+        CheckUnlocked(levelId, levelManager);
 
-        lockedImage.gameObject.SetActive(!isUnlocked);
+        CheckCompleted(levelId, levelManager);
 
-        if (!isUnlocked)
-        {
-            starImage.gameObject.SetActive(isUnlocked);
-            return;
-        }       
-
-        var starReached = levelManager.CheckStartReached(levelId);
-
-        starImage.gameObject.SetActive(starReached);
+        CheckStarReached(levelId, levelManager);
     }
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: LevelSaveObject
   m_EditorClassIdentifier: 
   isExpanded: 0
-  saveKey: 
+  saveKey: Levels
   Levels:
     key: SavedLevels
     value:
@@ -21,16 +21,16 @@ MonoBehaviour:
       - key: 0
         value:
           isUnlocked: 1
-          isCompleted: 0
+          isCompleted: 1
           starReached: 0
       - key: 1
         value:
-          isUnlocked: 0
-          isCompleted: 0
+          isUnlocked: 1
+          isCompleted: 1
           starReached: 0
       - key: 2
         value:
-          isUnlocked: 0
+          isUnlocked: 1
           isCompleted: 0
           starReached: 0
       - key: 3
@@ -58,7 +58,27 @@ MonoBehaviour:
           isUnlocked: 0
           isCompleted: 0
           starReached: 0
+      - key: 8
+        value:
+          isUnlocked: 0
+          isCompleted: 0
+          starReached: 0
+      - key: 9
+        value:
+          isUnlocked: 0
+          isCompleted: 0
+          starReached: 0
+      - key: 10
+        value:
+          isUnlocked: 0
+          isCompleted: 0
+          starReached: 0
+      - key: 11
+        value:
+          isUnlocked: 0
+          isCompleted: 0
+          starReached: 0
       error: 0
   LastUnlockedLevel:
     key: LastUnlockedLevel
-    value: 0
+    value: 2

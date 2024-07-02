@@ -15,6 +15,10 @@ namespace Game.View
         private Button creditsButton;
         [SerializeField]
         private LevelSelectorView levelSelectorView;
+        [SerializeField]
+        private SettingsView settingsView;
+        [SerializeField]
+        private CreditsView creditsView;
 
         public override bool Absolute => false;
 
@@ -39,7 +43,7 @@ namespace Game.View
 
         private void SettingsButton_OnPerformed()
         {
-
+            ParentStack.TryPushSafe(settingsView);
         }
 
         private void PlayButton_OnPerformed()
@@ -49,7 +53,7 @@ namespace Game.View
 
         private void CreditsButton_OnPerformed()
         {
-
+            ParentStack.TryPushSafe(creditsView);
         }
 
         protected override void Presentation_OnShowPresentationComplete(IAmViewPresentation presentation)

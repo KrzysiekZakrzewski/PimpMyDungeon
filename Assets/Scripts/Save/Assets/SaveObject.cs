@@ -12,7 +12,7 @@ namespace Saves
     {
         [SerializeField, HideInInspector] 
         private bool isExpanded;
-        [SerializeField, HideInInspector] 
+        [SerializeField] 
         private string saveKey;
 
         private Dictionary<string, SaveValueBase> lookupCache;
