@@ -36,6 +36,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 4799227aa38340d4ab28d362d4978c56, type: 2}
+    - target: {fileID: 4956735187085034711, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 217ff128e13c9374981b4d2f3a35b63c, type: 3}
     - target: {fileID: 5028344341126790227, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -76,6 +80,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6850295482254734152, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: squareVisualize
+      value: 
+      objectReference: {fileID: 7949202130528073733}
     - target: {fileID: 6883861688679796198, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
       propertyPath: m_Name
       value: Coin
@@ -83,9 +91,22 @@ PrefabInstance:
     - target: {fileID: 7618996511782858009, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 693b856488b30f54e991500850742b43, type: 3}
+      objectReference: {fileID: -50472205, guid: 680fe70f98be2454488de902856bc170, type: 3}
+    - target: {fileID: 7618996511782858009, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 9323954615f6ae24b923b91085161b42, type: 2}
+    - target: {fileID: 8482998749963511735, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: onlyOneAnimationLoop
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+--- !u!212 &7949202130528073733 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4956735187085034711, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+  m_PrefabInstance: {fileID: 3069450933756067026}
+  m_PrefabAsset: {fileID: 0}

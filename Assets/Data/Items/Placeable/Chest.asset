@@ -18,3 +18,8 @@ MonoBehaviour:
   - {x: 0, y: 1}
   - {x: 1, y: 1}
   <Prefab>k__BackingField: {fileID: 5717046989039857601, guid: c4739dbd63c94884d992345d09093f11, type: 3}
+  <Id>k__BackingField: 2
+  <ItemName>k__BackingField: Chest
+  <ItemDescription>k__BackingField: 
+  <ItemIcon>k__BackingField: {fileID: -1610815252, guid: 829be9ae49938eb49a024e1edf205408, type: 3}
+  <ItemSizeIcon>k__BackingField: {fileID: 21300000, guid: 523db049075e9f74d9ac21defbc966af, type: 3}

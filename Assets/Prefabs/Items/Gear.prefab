@@ -28,6 +28,38 @@ PrefabInstance:
       propertyPath: m_SpriteTilingProperty.oldSize.y
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 968045504599618845, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.56
+      objectReference: {fileID: 0}
+    - target: {fileID: 968045504599618845, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.33
+      objectReference: {fileID: 0}
+    - target: {fileID: 2685736066985037993, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_Size.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2685736066985037993, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_Size.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2685736066985037993, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: cd5d47dc9b147034381549a48f95dcf3, type: 3}
+    - target: {fileID: 2685736066985037993, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4695357870224615915, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 8c272f199e683bf4983fb3daaae984f7, type: 2}
+    - target: {fileID: 4956735187085034711, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: dbe341fd1f4c96b4187b991013ae3337, type: 3}
     - target: {fileID: 5028344341126790227, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -68,6 +100,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6850295482254734152, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: squareVisualize
+      value: 
+      objectReference: {fileID: 707337578055076220}
     - target: {fileID: 6883861688679796198, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
       propertyPath: m_Name
       value: Gear
@@ -76,8 +112,17 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: cd5d47dc9b147034381549a48f95dcf3, type: 3}
+    - target: {fileID: 8482998749963511735, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: onlyOneAnimationLoop
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+--- !u!212 &707337578055076220 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4956735187085034711, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+  m_PrefabInstance: {fileID: 5555519596894621099}
+  m_PrefabAsset: {fileID: 0}

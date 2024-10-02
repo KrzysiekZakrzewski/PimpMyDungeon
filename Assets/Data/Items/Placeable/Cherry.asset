@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c81dc03b592c5044888af41c7f06d2ec, type: 3}
+  m_Name: Cherry
+  m_EditorClassIdentifier: 
+  <ItemPoints>k__BackingField:
+  - {x: 0, y: 0}
+  <Prefab>k__BackingField: {fileID: 884296245902493416, guid: 6c8620bb19beb53429adfc530b820863, type: 3}
+  <Id>k__BackingField: 11
+  <ItemName>k__BackingField: Cherry
+  <ItemDescription>k__BackingField: 
+  <ItemIcon>k__BackingField: {fileID: 1196551425, guid: 0c2b52361c0b1d248b8b530821e557df, type: 3}
+  <ItemSizeIcon>k__BackingField: {fileID: 21300000, guid: d2d1118e2f8bd744398d3caa249788a5, type: 3}

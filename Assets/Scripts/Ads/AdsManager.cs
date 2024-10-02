@@ -1,156 +1,209 @@
+using Ads.Data;
+using Network;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Advertisements;
+using Zenject;
 
-public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener, IUnityAdsLoadListener, IUnityAdsShowListener
+namespace Ads
 {
-    [SerializeField]
-    private string androidGameId;
-    [SerializeField]
-    private string iOSGameId;
-
-    [SerializeField]
-    private bool testMode = true;
-
-    [SerializeField]
-    private string androindAdUnitId;
-    [SerializeField]
-    private string iOSAdUnitId;
-
-    private string gameId;
-    private string adUnitId;
-
-    private bool isInitialized;
-
-    public bool InitializeFinished { get; private set; }
-
-    public void InitializeAds()
+    public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener, IUnityAdsLoadListener, IUnityAdsShowListener
     {
-#if UNITY_ANDROID
-        gameId = androidGameId;
-        adUnitId = androindAdUnitId;
-#elif UNITY_IOS
-        gameId = iOSGameId;
-        adUnitId = iOSAdUnitId;
-#elif UNITY_EDITOR
-        gameId = androidGameId;
-        adUnitId = androindAdUnitId;
-#endif
+        [SerializeField]
+        private string androidGameId;
+        [SerializeField]
+        private string iOSGameId;
+        [SerializeField]
+        private bool testMode = true;
 
-        if (Advertisement.isInitialized || !Advertisement.isSupported)
+        private string gameId;
+        private string adUnitId;
+
+        private event Action endAdsEvent;
+
+        private bool isInitialized;
+
+        private NetworkManager networkManager;
+
+        private bool IsInitialized => isInitialized && InitializeFinished;
+
+        public bool InitializeFinished { get; private set; }
+        public bool CanShowAd => IsInitialized && networkManager.IsNetworkConnection;
+
+        [Inject]
+        private void Inject(NetworkManager networkManager)
         {
-            InitializeFinished = true;
-            return;
+            this.networkManager = networkManager;
         }
 
-        Advertisement.Initialize(gameId, testMode, this);
-    }
-
-    private bool IsInitialized()
-    {
-        return isInitialized && InitializeFinished;
-    }
-
-    private void OnBannerClicked() { }
-    private void OnBannerShown() { }
-    private void OnBannerHidden() { }
-
-    private void OnBannerLoaded()
-    {
-        Debug.Log("Banner loaded");
-    }
-
-    private void OnBannerError(string message)
-    {
-        Debug.Log($"Banner Error: {message}");
-    }
-
-    private void ShowBannerAd()
-    {
-        // Set up options to notify the SDK of show events:
-        BannerOptions options = new BannerOptions
+        private void OnDestroy()
         {
-            clickCallback = OnBannerClicked,
-            hideCallback = OnBannerHidden,
-            showCallback = OnBannerShown
-        };
+            
+        }
 
-        // Show the loaded Banner Ad Unit:
-        Advertisement.Banner.Show(adUnitId, options);
-    }
-
-    private void HideBannerAd()
-    {
-        Advertisement.Banner.Hide();
-    }
-
-    public void OnInitializationComplete()
-    {
-        Debug.Log("Unity Ads initialization complete.");
-
-        InitializeFinished = true;
-        isInitialized = true;
-    }
-
-    public void OnInitializationFailed(UnityAdsInitializationError error, string message)
-    {
-        Debug.Log($"Unity Ads initialization failed: {error} - {message}");
-        InitializeFinished = true;
-    }
-
-    public void OnUnityAdsAdLoaded(string placementId)
-    {
-        Advertisement.Show(placementId, this);
-    }
-
-    public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
-    {
-        Debug.Log($"Error loading Ad Unit {adUnitId}: {error} - {message}");
-    }
-
-    public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
-    {
-        Debug.Log($"Error showing Ad Unit {adUnitId}: {error} - {message}");
-    }
-
-    public void OnUnityAdsShowStart(string placementId)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void OnUnityAdsShowClick(string placementId)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
-    {
-        if(placementId.Equals(adUnitId) && showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED)) { }
-    }
-
-    public void ShowAd()
-    {
-        if (!IsInitialized())
-            return;
-
-        Advertisement.Load(adUnitId, this);
-    }
-
-    public void LoadBanner()
-    {
-        if (!IsInitialized())
-            return;
-
-        // Set up options to notify the SDK of load events:
-        BannerLoadOptions options = new BannerLoadOptions
+        private void OnConnected(NetworkManager networkManager)
         {
-            loadCallback = OnBannerLoaded,
-            errorCallback = OnBannerError
-        };
+            if (IsInitialized)
+                return;
 
-        // Load the Ad Unit with banner content:
-        Advertisement.Banner.Load(adUnitId, options);
+            InitializeAds();
+        }
+
+        private void OnDisconnected(NetworkManager networkManager)
+        {
+            isInitialized = false;
+            InitializeFinished = false;
+        }
+
+        private void OnBannerClicked() { }
+
+        private void OnBannerShown() { }
+
+        private void OnBannerHidden() { }
+
+        private void OnBannerLoaded()
+        {
+            ShowBannerAd();
+        }
+
+        private void OnBannerError(string message)
+        {
+            Debug.Log($"Banner Error: {message}");
+        }
+
+        private bool LoadBanner()
+        {
+            if (!CanShowAd)
+                return false;
+
+            BannerLoadOptions options = new BannerLoadOptions
+            {
+                loadCallback = OnBannerLoaded,
+                errorCallback = OnBannerError
+            };
+
+            Advertisement.Banner.Load(adUnitId, options);
+
+            return true;
+        }
+
+        private void ShowBannerAd()
+        {
+            BannerOptions options = new BannerOptions
+            {
+                clickCallback = OnBannerClicked,
+                hideCallback = OnBannerHidden,
+                showCallback = OnBannerShown
+            };
+
+            Advertisement.Banner.Show(adUnitId, options);
+        }
+
+        private void HideBannerAd()
+        {
+            Advertisement.Banner.Hide();
+        }
+
+        public void OnInitializationComplete()
+        {
+            Debug.Log("Unity Ads initialization complete.");
+
+            InitializeFinished = true;
+            isInitialized = true;
+        }
+
+        public void OnInitializationFailed(UnityAdsInitializationError error, string message)
+        {
+            Debug.Log($"Unity Ads initialization failed: {error} - {message}");
+            isInitialized = false;
+            InitializeFinished = true;
+        }
+
+        public void OnUnityAdsAdLoaded(string placementId)
+        {
+            Advertisement.Show(placementId, this);
+        }
+
+        public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
+        {
+            Debug.Log($"Error loading Ad Unit {adUnitId}: {error} - {message}");
+        }
+
+        public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
+        {
+            Debug.Log($"Error showing Ad Unit {adUnitId}: {error} - {message}");
+        }
+
+        public void OnUnityAdsShowStart(string placementId)
+        {
+
+        }
+
+        public void OnUnityAdsShowClick(string placementId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
+        {
+            if (!placementId.Equals(adUnitId) || showCompletionState.Equals(UnityAdsShowCompletionState.UNKNOWN))
+                return;
+
+            endAdsEvent?.Invoke();
+        }
+
+        public bool ShowAd(AddDataBase adData, Action endAdsEvent)
+        {
+            if (!CanShowAd)
+                return false;
+
+#if UNITY_ANDROID
+            adUnitId = adData.AddAndroidId;
+#elif UNITY_IOS
+            adUnitId = addData.AddIOSId;
+#elif UNITY_EDITOR
+            adUnitId = addData.AddAndroidId;
+#endif
+
+            this.endAdsEvent += endAdsEvent;
+            this.endAdsEvent += () => UnsubscribeEvent(endAdsEvent);
+
+            if (adData is BannerAdsData)
+                return LoadBanner();
+
+            Advertisement.Load(adUnitId, this);
+
+            return true;
+        }
+
+        public void InitializeAds()
+        {
+#if UNITY_ANDROID
+            gameId = androidGameId;
+#elif UNITY_IOS
+            gameId = iOSGameId;
+#elif UNITY_EDITOR
+            gameId = androidGameId;
+#endif
+
+            networkManager.OnConected += OnConnected;
+            networkManager.OnDisconnected += OnDisconnected;
+
+            if (Advertisement.isInitialized || !Advertisement.isSupported || !networkManager.IsNetworkConnection)
+            {
+                InitializeFinished = true;
+                return;
+            }
+
+            Advertisement.Initialize(gameId, testMode, this);
+        }
+
+        public void UnsubscribeEvent(Action endAdsEvent)
+        {
+            this.endAdsEvent -= endAdsEvent;
+            this.endAdsEvent -= () => UnsubscribeEvent(endAdsEvent);
+        }
     }
 }

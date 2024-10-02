@@ -21,3 +21,8 @@ MonoBehaviour:
   - {x: 1, y: 2}
   - {x: 2, y: 2}
   <Prefab>k__BackingField: {fileID: 4824913637209494827, guid: ef2056f8206d21848999d407541a78d6, type: 3}
+  <Id>k__BackingField: 3
+  <ItemName>k__BackingField: Sword
+  <ItemDescription>k__BackingField: 
+  <ItemIcon>k__BackingField: {fileID: 677279092, guid: 0ff9cf2ae4d18a74faf132427468178a, type: 3}
+  <ItemSizeIcon>k__BackingField: {fileID: 21300000, guid: 70df79ad47872594cbf2572d1e1714eb, type: 3}

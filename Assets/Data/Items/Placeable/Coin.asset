@@ -15,3 +15,8 @@ MonoBehaviour:
   <ItemPoints>k__BackingField:
   - {x: 0, y: 0}
   <Prefab>k__BackingField: {fileID: 8435386032302289204, guid: 7de82830d1cde384681050be432a65b1, type: 3}
+  <Id>k__BackingField: 0
+  <ItemName>k__BackingField: Coin
+  <ItemDescription>k__BackingField: 
+  <ItemIcon>k__BackingField: {fileID: -50472205, guid: 680fe70f98be2454488de902856bc170, type: 3}
+  <ItemSizeIcon>k__BackingField: {fileID: 21300000, guid: d2d1118e2f8bd744398d3caa249788a5, type: 3}

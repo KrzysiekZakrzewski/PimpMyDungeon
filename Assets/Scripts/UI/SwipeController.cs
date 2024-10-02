@@ -1,7 +1,5 @@
 using Levels;
-using System;
 using UnityEngine;
-using UnityEngine.UI;
 using ViewSystem;
 using ViewSystem.Implementation;
 using Zenject;
@@ -9,7 +7,7 @@ using Zenject;
 public class SwipeController : SingleViewTypeStackController
 {
     [SerializeField]
-    private Button nextButton, prevButton;
+    private UIButton nextButton, prevButton;
     [SerializeField]
     private ScrollLevelLeftView leftPage;
     [SerializeField]
@@ -50,8 +48,8 @@ public class SwipeController : SingleViewTypeStackController
         leftPage.Init(this, levelManager, MovingComplete);
         rightPage.Init(this, levelManager, MovingComplete);
 
-        nextButton.onClick.AddListener(NextPage);
-        prevButton.onClick.AddListener(PrevPage);
+        nextButton.SetupButtonEvent(NextPage);
+        prevButton.SetupButtonEvent(PrevPage);
 
         var levelsCount = levelManager.GetLevelsCount();
 
@@ -65,7 +63,7 @@ public class SwipeController : SingleViewTypeStackController
 
     private void NextPage()
     {
-        if (PageId == lastPageId)
+        if (isMoving || PageId == lastPageId)
             return;
 
         leftPage.SwipePageToLeft();
@@ -78,7 +76,7 @@ public class SwipeController : SingleViewTypeStackController
 
     private void PrevPage()
     {
-        if (PageId == 0)
+        if (isMoving || PageId == 0)
             return;
 
         leftPage.SwipePageToRight();

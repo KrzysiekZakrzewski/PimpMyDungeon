@@ -1,69 +1,100 @@
-using Game.View;
 using Levels;
 using UnityEngine;
-using UnityEngine.UI;
 using ViewSystem;
 using ViewSystem.Implementation;
 using Zenject;
+using DG.Tweening;
+using UnityEngine.UI;
 
-public class LevelCompletedView : BasicView
+namespace Game.View
 {
-    [SerializeField]
-    private Button nextLevelButton;
-    [SerializeField]
-    private Button mainMenuButton;
-    [SerializeField]
-    private Button restartLevelButton;
-
-    [SerializeField]
-    private Material noStarMaterial;
-
-    public override bool Absolute => false;
-
-    private LevelManager levelManager;
-
-    [Inject]
-    private void Inject(LevelManager levelManager)
+    public class LevelCompletedView : BasicView
     {
-        this.levelManager = levelManager;
-    }
+        [SerializeField]
+        private CanvasGroup levelCompletedPanel;
 
-    protected override void Awake()
-    {
-        base.Awake();
+        [SerializeField]
+        private UIButton nextLevelButton;
+        [SerializeField]
+        private UIButton mainMenuButton;
+        [SerializeField]
+        private UIButton restartLevelButton;
+        [SerializeField]
+        private Image starIcon;
 
-        nextLevelButton.onClick.AddListener(OnNextLevelPerformed);
-        mainMenuButton.onClick.AddListener(OnMainMenuPerformed);
-        restartLevelButton.onClick.AddListener(OnRestartLevelPerformed);
-    }
+        [SerializeField]
+        private Material noStarMaterial;
 
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
+        private float levelPanelDelay = 0.5f;
+        private LevelManager levelManager;
 
-        nextLevelButton.onClick.RemoveAllListeners();
-        mainMenuButton.onClick.RemoveAllListeners();
-        restartLevelButton.onClick.RemoveAllListeners();
-    }
+        public override bool Absolute => false;
 
-    private void OnNextLevelPerformed()
-    {
-        ParentStack.TryPopSafe();
+        [Inject]
+        private void Inject(LevelManager levelManager)
+        {
+            this.levelManager = levelManager;
+        }
 
-        levelManager.LoadNextLevel();
-    }
+        protected override void Awake()
+        {
+            base.Awake();
 
-    private void OnMainMenuPerformed()
-    {
-        ParentStack.TryPopSafe();
+            nextLevelButton.SetupButtonEvent(OnNextLevelPerformed);
+            mainMenuButton.SetupButtonEvent(OnMainMenuPerformed);
+            restartLevelButton.SetupButtonEvent(OnRestartLevelPerformed);
 
-        levelManager.BackToMainMenu();
-    }
+            levelCompletedPanel.interactable = false;
+            levelCompletedPanel.alpha = 0f;
 
-    private void OnRestartLevelPerformed()
-    {
-        ParentStack.TryPopSafe();
+            //starIcon.material = noStarMaterial;
+        }
 
-        levelManager.RestartLevel();
+        public override void NavigateTo(IAmViewStackItem previousViewStackItem)
+        {
+            base.NavigateTo(previousViewStackItem);
+
+            levelCompletedPanel.DOFade(1f, levelPanelDelay).SetDelay(levelPanelDelay).OnComplete(() => levelCompletedPanel.interactable = true);
+        }
+
+        public override void NavigateFrom(IAmViewStackItem nextViewStackItem)
+        {
+            base.NavigateFrom(nextViewStackItem);
+
+            levelCompletedPanel.interactable = false;
+
+            levelCompletedPanel.DOFade(0f, levelPanelDelay);
+        }
+
+        private void OnNextLevelPerformed()
+        {
+            if (levelManager.ShowAddBeforeNextLevel(OnNextLevel))
+                return;
+
+            OnNextLevel();
+        }
+
+        private void OnNextLevel()
+        {
+            ParentStack.TryPopSafe();
+
+            levelManager.LoadNextLevel();
+        }
+
+        private void OnMainMenuPerformed()
+        {
+            ParentStack.Pop();
+
+            ParentStack.Pop();
+
+            levelManager.BackToMainMenu();
+        }
+
+        private void OnRestartLevelPerformed()
+        {
+            ParentStack.TryPopSafe();
+
+            levelManager.RestartLevel();
+        }
     }
 }

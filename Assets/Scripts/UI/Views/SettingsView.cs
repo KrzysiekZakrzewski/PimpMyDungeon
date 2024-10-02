@@ -1,5 +1,5 @@
-using Audio.Manager;
-using DG.Tweening;
+using Audio.SoundsData;
+using Haptics;
 using Saves;
 using Settings;
 using UnityEngine;
@@ -13,13 +13,18 @@ namespace Game.View
     public class SettingsView : BasicView
     {
         [SerializeField]
-        private SettingsToogle musicButton;
+        private UIToogle musicButton;
         [SerializeField]
-        private SettingsToogle SFXButton;
+        private UIToogle SFXButton;
         [SerializeField]
-        private SettingsToogle vibrationButton;
+        private UIToogle vibrationButton;
         [SerializeField]
-        private Button backButton;
+        private UIButton backButton;
+        [SerializeField]
+        private UIButton creditsButton;
+
+        [SerializeField]
+        private CreditsView creditsView;
 
         private SettingsManager settingsManager;
 
@@ -43,19 +48,25 @@ namespace Game.View
             musicButton.SetupButtonEvent(OnMusicPerformed);
             SFXButton.SetupButtonEvent(OnSFXPerformed);
             vibrationButton.SetupButtonEvent(OnVibrationPerformed);
-            backButton.onClick.AddListener(OnClickBackPerformed);
+            backButton.SetupButtonEvent(OnBackPerformed);
+            creditsButton.SetupButtonEvent(OnCreditsPerformed);
         }
 
         private void RefreshButtonsState()
         {
             musicButton.LoadButtonState(settingsManager.GetSettingsValue<bool>(SaveKeyUtilities.MusicSettingsKey));
             SFXButton.LoadButtonState(settingsManager.GetSettingsValue<bool>(SaveKeyUtilities.SFXSettingsKey));
-            vibrationButton.LoadButtonState(true);
+            vibrationButton.LoadButtonState(settingsManager.GetSettingsValue<bool>(SaveKeyUtilities.HapticsSettingsKey));
         }
 
-        private void OnClickBackPerformed()
+        private void OnBackPerformed()
         {
             ParentStack.TryPopSafe();
+        }
+
+        private void OnCreditsPerformed()
+        {
+            ParentStack.TryPushSafe(creditsView);
         }
 
         private void OnMusicPerformed()

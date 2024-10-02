@@ -8,17 +8,17 @@ namespace Game.View
     public class MainMenuView : BasicView
     {
         [SerializeField]
-        private Button playButton;
+        private UIButton playButton;
         [SerializeField]
-        private Button settingsButton;
+        private UIButton settingsButton;
         [SerializeField]
-        private Button creditsButton;
+        private UIButton guideButton;
         [SerializeField]
         private LevelSelectorView levelSelectorView;
         [SerializeField]
         private SettingsView settingsView;
         [SerializeField]
-        private CreditsView creditsView;
+        private DiaryView guideView;
 
         public override bool Absolute => false;
 
@@ -36,9 +36,9 @@ namespace Game.View
 
         private void SetupButtons()
         {
-            playButton.onClick.AddListener(PlayButton_OnPerformed);
-            settingsButton.onClick.AddListener(SettingsButton_OnPerformed);
-            creditsButton.onClick.AddListener(CreditsButton_OnPerformed);
+            playButton.SetupButtonEvent(PlayButton_OnPerformed);
+            settingsButton.SetupButtonEvent(SettingsButton_OnPerformed);
+            guideButton.SetupButtonEvent(GuideButton_OnPerformed);
         }
 
         private void SettingsButton_OnPerformed()
@@ -51,9 +51,9 @@ namespace Game.View
             ParentStack.TryPushSafe(levelSelectorView);
         }
 
-        private void CreditsButton_OnPerformed()
+        private void GuideButton_OnPerformed()
         {
-            ParentStack.TryPushSafe(creditsView);
+            ParentStack.TryPushSafe(guideView);
         }
 
         protected override void Presentation_OnShowPresentationComplete(IAmViewPresentation presentation)

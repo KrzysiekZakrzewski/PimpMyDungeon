@@ -17,6 +17,7 @@ namespace Generator.Item
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
+
             if (GUILayout.Button("Sort Items"))
             {
                 database.SortItem();

@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1c943fc08a0224d9c8a989596a078c, type: 3}
+  m_Name: Chapter_1_Level_4
+  m_EditorClassIdentifier: 
+  <Name>k__BackingField: Chapter_1_Level_4
+  <FloorPositions>k__BackingField:
+  - {x: 0, y: 0}
+  - {x: -1, y: 0}
+  - {x: -1, y: -1}
+  - {x: 0, y: -1}
+  - {x: 1, y: -1}
+  - {x: 1, y: -2}
+  - {x: 2, y: -2}
+  <CenterPoint>k__BackingField: {x: 1, y: -0.5}
+  <Obstacles>k__BackingField:
+    pairs:
+    - key: {x: 0, y: -1}
+      value: {fileID: 11400000, guid: bdb6264e866a5c54f9be7388fbc00738, type: 2}
+    - key: {x: 2, y: -2}
+      value: {fileID: 11400000, guid: bdb6264e866a5c54f9be7388fbc00738, type: 2}
+    - key: {x: 1, y: -2}
+      value: {fileID: 11400000, guid: bdb6264e866a5c54f9be7388fbc00738, type: 2}
+    error: 0
+  <PlaceableItems>k__BackingField:
+  - <RotationID>k__BackingField: 2
+    <OriginPosition>k__BackingField: {x: -1, y: 0}
+    <SpawnPosition>k__BackingField: {x: -0.5, y: 0}
+    <PlaceItemData>k__BackingField: {fileID: 11400000, guid: 0099038154f7b004aaac26c7160f6959, type: 2}
+  - <RotationID>k__BackingField: 2
+    <OriginPosition>k__BackingField: {x: 0, y: 0}
+    <SpawnPosition>k__BackingField: {x: 0.5, y: 0.5}
+    <PlaceItemData>k__BackingField: {fileID: 11400000, guid: 0324bde28dc758e44a380c3f9b881977, type: 2}
+  - <RotationID>k__BackingField: 1
+    <OriginPosition>k__BackingField: {x: 1, y: -1}
+    <SpawnPosition>k__BackingField: {x: 1.5, y: -0.5}
+    <PlaceItemData>k__BackingField: {fileID: 11400000, guid: 0324bde28dc758e44a380c3f9b881977, type: 2}
+  <IsOverride>k__BackingField: 0
+  <PlaceableItemOverride>k__BackingField: []

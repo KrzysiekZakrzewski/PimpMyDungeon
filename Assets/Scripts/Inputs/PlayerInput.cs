@@ -224,6 +224,11 @@ namespace Inputs
             return mouseAction.ReadValue<Vector2>();
         }
 
+        public InputAction GetActionByName(string actionName)
+        {
+            return controls.FindAction(actionName);
+        }
+
         public void EnableActions()
         {
             controls.Enable();

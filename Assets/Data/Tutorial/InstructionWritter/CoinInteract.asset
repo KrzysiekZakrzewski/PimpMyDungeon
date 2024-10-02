@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be94f85f150d0454aa2fdbd44eac6948, type: 3}
+  m_Name: CoinInteract
+  m_EditorClassIdentifier: 
+  <WindowObject>k__BackingField: {fileID: 7467018485160423142, guid: 934dd94a73d1332439c7b4b366940bdd, type: 3}
+  <OnInteractableItem>k__BackingField: {fileID: 11400000, guid: 0324bde28dc758e44a380c3f9b881977, type: 2}

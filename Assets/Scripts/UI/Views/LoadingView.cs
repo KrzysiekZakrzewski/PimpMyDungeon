@@ -1,7 +1,6 @@
 using DG.Tweening;
 using Game.SceneLoader;
 using Inputs;
-using Loading.Data;
 using System;
 using TMPro;
 using UnityEngine;
@@ -31,6 +30,8 @@ namespace Game.View
         private Color transparentColor = new(1f,1f,1f,0f);
 
         private SceneLoadManagers sceneLoadManagers;
+
+        private bool continuePressed = false;   
 
         [NonSerialized]
         private Inputs.PlayerInput playerInput;
@@ -65,14 +66,21 @@ namespace Game.View
 
             IsShowPresentationComplete = true;
 
-            playerInput.AddInputEventDelegate(Continue_OnPerformed, InputActionEventType.ButtonUp, InputUtilities.AnyKey);
-
             loadingViewCamera.gameObject.SetActive(true);
+
+            continuePressed = false;
         }
 
         private void Continue_OnPerformed(InputAction.CallbackContext callback)
         {
+            if (continuePressed)
+                return;
+
             sceneLoadManagers.OpenScenes();
+
+            continueText.DOFade(0f, changeTextDuration);
+
+            continuePressed = true;
         }
 
         private void CreateSequence()
@@ -86,6 +94,11 @@ namespace Game.View
             changeTextSequnce.Append(continueText.DOFade(1f, changeTextDuration));
 
             changeTextSequnce.Rewind();
+        }
+
+        private void AddContinuePerformed()
+        {
+            playerInput.AddInputEventDelegate(Continue_OnPerformed, InputActionEventType.ButtonUp, InputUtilities.AnyKey);
         }
 
         public override void NavigateTo(IAmViewStackItem previousViewStackItem)
@@ -108,14 +121,14 @@ namespace Game.View
         {
             hintText.DOKill();
 
-            changeTextSequnce.Play();
+            changeTextSequnce.Play().OnComplete(AddContinuePerformed);
         }
 
         public void SetupLoadingScreen(string hint, Sprite background)
         {
             continueText.color = transparentColor;
             hintText.color = transparentColor;
-            hintText.text = hint;
+            hintText.text = "";
             backgroundImage.sprite = background;
             hintText.DOFade(1f, 1f);
 

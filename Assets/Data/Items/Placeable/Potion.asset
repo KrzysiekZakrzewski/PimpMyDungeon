@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <ItemPoints>k__BackingField:
   - {x: 0, y: 0}
-  - {x: 1, y: 0}
-  - {x: 2, y: 0}
-  - {x: 1, y: 1}
-  <Prefab>k__BackingField: {fileID: 3028077547707911409, guid: 0bb9b263318f9d24fa2140d8a5516aa5, type: 3}
+  - {x: 0, y: 1}
+  - {x: 0, y: 2}
+  <Prefab>k__BackingField: {fileID: 5387825415289340966, guid: 394693a16ccfe6047a4265ff33cd08ac, type: 3}
+  <Id>k__BackingField: 6
+  <ItemName>k__BackingField: Potion
+  <ItemDescription>k__BackingField: 
+  <ItemIcon>k__BackingField: {fileID: -679549767, guid: 8ae9888514e263b48919dda6b2c24ef2, type: 3}
+  <ItemSizeIcon>k__BackingField: {fileID: 21300000, guid: c69e14e9d331e014fb2ea94ca35d0743, type: 3}

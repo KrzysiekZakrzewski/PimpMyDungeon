@@ -14,4 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <ItemPoints>k__BackingField:
   - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  - {x: 0, y: 2}
+  - {x: 1, y: 1}
+  - {x: 1, y: 2}
+  - {x: 2, y: 0}
+  - {x: 2, y: 1}
   <Prefab>k__BackingField: {fileID: 244669007830064874, guid: 0b9b701135e41b449a910ca685f06008, type: 3}
+  <Id>k__BackingField: 7
+  <ItemName>k__BackingField: Pickaxe
+  <ItemDescription>k__BackingField: 
+  <ItemIcon>k__BackingField: {fileID: 1385757223, guid: 818d67af0269a2248aaaa0016e2eb1cf, type: 3}
+  <ItemSizeIcon>k__BackingField: {fileID: 21300000, guid: fc6eccd1cffe4d846bdc64f6d49fd362, type: 3}

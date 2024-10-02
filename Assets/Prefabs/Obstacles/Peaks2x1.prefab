@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2412327330092332617}
   - component: {fileID: 1396980017910015226}
   - component: {fileID: 5967737526850452381}
+  - component: {fileID: 4712284603178527822}
   m_Layer: 0
   m_Name: Peaks2x1
   m_TagString: Untagged
@@ -72,7 +73,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 77197299
-  m_SortingLayer: 2
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: -1977668204, guid: e2c20a92a6ca18e40a4d700c9f1ff944, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -106,3 +107,17 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4712284603178527822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6658270817828319880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b3b273dfd4a4ef499222e43aa9ccfa2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onlyOneAnimationLoop: 0
+  randomizeAnimation: 1

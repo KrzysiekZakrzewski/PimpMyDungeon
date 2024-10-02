@@ -136,13 +136,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 150827a1395a6dc428b63908b49c3f79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelButton: {fileID: 3029542402283432924}
+  button: {fileID: 3029542402283432924}
+  pressSound: {fileID: 11400000, guid: 834c65a11afcc074faf8168645a72892, type: 2}
+  hapticsType: 2
   numberTxt: {fileID: 2107950334346034241}
   normalSprite: {fileID: 1691167727, guid: 0a108be6552495e4b93afc697d03805f, type: 3}
   completedSprite: {fileID: -1671697380, guid: 0a108be6552495e4b93afc697d03805f, type: 3}
   lockedImage: {fileID: 8398720350846987913}
   starImage: {fileID: 8245609422164451575}
-  noStarReachedMaterial: {fileID: 2100000, guid: 24126f4499543464b9c379f71264a4b4, type: 2}
+  noStarReachedMaterial: {fileID: 2100000, guid: af446baaf5fb91d47a770923422ad54d, type: 2}
 --- !u!1 &5905246399423333678
 GameObject:
   m_ObjectHideFlags: 0
@@ -363,6 +365,7 @@ GameObject:
   - component: {fileID: 6106725971243353530}
   - component: {fileID: 2723711758532959072}
   - component: {fileID: 8245609422164451575}
+  - component: {fileID: 1430950669779142903}
   m_Layer: 5
   m_Name: Star
   m_TagString: Untagged
@@ -417,7 +420,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bdcf65b076bb2274992d0b9aa7d1edcf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bd59bf2e866ed4529ae645637eb9c11d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -427,3 +430,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!95 &1430950669779142903
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8123009324139420467}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0187b62eb661b27449df6607b920d631, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

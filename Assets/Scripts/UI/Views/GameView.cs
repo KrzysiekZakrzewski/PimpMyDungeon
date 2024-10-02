@@ -1,12 +1,13 @@
 using DG.Tweening;
 using Generator;
+using Item.Guide;
 using Levels;
-using Saves;
-using Saves.Object;
+using Tips;
 using UnityEngine;
 using UnityEngine.UI;
 using ViewSystem;
 using ViewSystem.Implementation;
+using Zenject;
 
 namespace Game.View 
 {
@@ -17,45 +18,69 @@ namespace Game.View
         [SerializeField]
         private Image skipImage;
         [SerializeField]
-        private Button pauseButton;
+        private UIButton pauseButton;
+        [SerializeField] 
+        private UIButton tipButton;
+        [SerializeField]
+        private UIButton showSquareButton;
         [SerializeField]
         private LevelCompletedView levelCompletedView;
         [SerializeField]
         private PauseView pauseView;
+        [SerializeField]
+        private GuideNotification guideNotification;
 
         private readonly float showSkipPanelDuration = 0.5f;
+        private LevelBuilder levelBuilder;
+        private TipManager tipManager;
+
+        private RectTransform[] rects = new RectTransform[3];
 
         public override bool Absolute => false;
+
+        [Inject]
+        private void Inject(LevelBuilder levelBuilder, TipManager tipManager)
+        {
+            this.levelBuilder = levelBuilder;
+            this.tipManager = tipManager;
+        }
 
         protected override void Awake()
         {
             base.Awake();
-            pauseButton.onClick.AddListener(OnPausePerformend);
+            pauseButton.SetupButtonEvent(OnPausePerformend);
+            tipButton.SetupButtonEvent(OnTipPerformed);
+            showSquareButton.SetupButtonEvent(OnShowSquarePerformed);
 
             LevelManager.LevelCompletedEvent += ShowLevelCompleted;
+
+            rects[0] = pauseButton.GetComponent<RectTransform>();
+            rects[1] = tipButton.GetComponent<RectTransform>();
+            rects[2] = showSquareButton.GetComponent<RectTransform>();
+
+            levelBuilder.SetRects(rects);
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
 
-            RemoveHoldActions();
-
-            pauseButton.onClick.RemoveAllListeners();
-
             LevelManager.LevelCompletedEvent -= ShowLevelCompleted;
+        }
+
+        private void OnTipPerformed()
+        {
+            var adShowed = tipManager.TryGenerateTip();
+        }
+
+        private void OnShowSquarePerformed()
+        {
+            levelBuilder.ShowTipSquare();
         }
 
         private void OnPausePerformend()
         {
             ParentStack.TryPushSafe(pauseView);
-        }
-
-        private void RemoveHoldActions()
-        {
-            LevelBuilder.StartHoldAction -= ShowSkipPanel;
-            LevelBuilder.EndHoldAction -= HideSkipPanel;
-            LevelBuilder.HeldUpdateAction -= UpdateSkipPanel;
         }
 
         private void ShowSkipPanel()
@@ -103,10 +128,6 @@ namespace Game.View
             base.Presentation_OnShowPresentationComplete(presentation);
 
             ResetSkipPanel(true);
-
-            LevelBuilder.StartHoldAction += ShowSkipPanel;
-            LevelBuilder.EndHoldAction += HideSkipPanel;
-            LevelBuilder.HeldUpdateAction += UpdateSkipPanel;
         }
 
         public void ShowLevelCompleted()

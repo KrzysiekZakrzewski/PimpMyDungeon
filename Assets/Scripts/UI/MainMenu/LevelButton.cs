@@ -5,11 +5,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class LevelButton : MonoBehaviour
+public class LevelButton : UIButton
 {
-    [SerializeField]
-    private Button levelButton;
-
     [SerializeField]
     private TextMeshProUGUI numberTxt;
 
@@ -34,8 +31,7 @@ public class LevelButton : MonoBehaviour
 
     private void Awake()
     {
-        levelButton = GetComponent<Button>();
-        levelButtonIcon = levelButton.image;
+        levelButtonIcon = button.image;
         rectTransform = levelButtonIcon.rectTransform;
     }
 
@@ -75,22 +71,24 @@ public class LevelButton : MonoBehaviour
     {
         if (!isCompleted)
         {
-            starImage.material = noStarReachedMaterial;
+            //starImage.material = noStarReachedMaterial;
             starImage.gameObject.SetActive(false);
             return;
         }
 
+        
         if (!starImage.gameObject.activeSelf)
             starImage.gameObject.SetActive(true);
 
-        var starReached = levelManager.CheckStartReached(levelId);
+        //var starReached = levelManager.CheckStartReached(levelId);
 
-        starImage.material = starReached ? null : noStarReachedMaterial;
+        //starImage.material = starReached ? null : noStarReachedMaterial;
+        
     }
 
     public void SetupButton(UnityAction<int> buttonEvent)
     {
-        levelButton.onClick.AddListener(() => OnClickPerformed(buttonEvent));
+        SetupButtonEvent(() => OnClickPerformed(buttonEvent));
     }
 
     public void RefreshButton(int levelId, LevelManager levelManager)

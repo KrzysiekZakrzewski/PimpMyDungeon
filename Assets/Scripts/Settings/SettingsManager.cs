@@ -1,8 +1,9 @@
 ﻿using Saves;
-using Assets.Scripts.Save.SaveObjects;
 using UnityEngine;
 using Audio.Manager;
 using Zenject;
+using Haptics;
+using Saves.Object;
 
 namespace Settings
 {
@@ -10,6 +11,8 @@ namespace Settings
     {
         private SettingsSaveObject settingsSaveObject;
         private AudioManager audioManager;
+
+        public bool InitializeFinished { get; private set; }
 
         [Inject]
         private void Inject(AudioManager audioManager)
@@ -23,6 +26,9 @@ namespace Settings
 
             audioManager.SetSoundGroupMuted(Audio.SoundsData.AudioTypes.Music, GetSettingsValue<bool>(SaveKeyUtilities.MusicSettingsKey));
             audioManager.SetSoundGroupMuted(Audio.SoundsData.AudioTypes.SFX, GetSettingsValue<bool>(SaveKeyUtilities.SFXSettingsKey));
+            HapticsManager.Load(GetSettingsValue<bool>(SaveKeyUtilities.HapticsSettingsKey));
+
+            InitializeFinished = true;
         }
 
         private void GetSaveObject()
@@ -42,21 +48,23 @@ namespace Settings
 
         public void SetMusicValue()
         {
-            var isMuted = audioManager.SetSoundGroupMuted(Audio.SoundsData.AudioTypes.Music);
+            var isOn = audioManager.SetSoundGroupMuted(Audio.SoundsData.AudioTypes.Music);
 
-            SetSettingsValue(SaveKeyUtilities.MusicSettingsKey, isMuted);
+            SetSettingsValue(SaveKeyUtilities.MusicSettingsKey, isOn);
         }
 
         public void SetSfxValue()
         {
-            var isMuted = audioManager.SetSoundGroupMuted(Audio.SoundsData.AudioTypes.SFX);
+            var isOn = audioManager.SetSoundGroupMuted(Audio.SoundsData.AudioTypes.SFX);
 
-            SetSettingsValue(SaveKeyUtilities.SFXSettingsKey, isMuted);
+            SetSettingsValue(SaveKeyUtilities.SFXSettingsKey, isOn);
         }
 
         public void SetVibrationValue()
         {
-            SetSettingsValue(SaveKeyUtilities.SFXSettingsKey, true);
+            var isOn = HapticsManager.OnOffHaptics();
+
+            SetSettingsValue(SaveKeyUtilities.HapticsSettingsKey, isOn);
         }
 
         public void SaveSettings()

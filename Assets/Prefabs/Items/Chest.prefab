@@ -26,16 +26,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 968045504599618845, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.902
+      value: -0.8
       objectReference: {fileID: 0}
     - target: {fileID: 968045504599618845, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.913
+      value: -0.649
+      objectReference: {fileID: 0}
+    - target: {fileID: 2685736066985037993, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_Size.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2685736066985037993, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_Size.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2685736066985037993, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 523067982, guid: 87ba1ddf6a66b164f9468265299ba533, type: 3}
+    - target: {fileID: 2685736066985037993, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4695357870224615915, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 32359efc3dbf22a41bb71fb525e9caff, type: 2}
+    - target: {fileID: 4956735187085034711, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 523db049075e9f74d9ac21defbc966af, type: 3}
     - target: {fileID: 5028344341126790227, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -76,6 +96,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6850295482254734152, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: squareVisualize
+      value: 
+      objectReference: {fileID: 6059232854412617456}
     - target: {fileID: 6883861688679796198, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
       propertyPath: m_Name
       value: Chest
@@ -84,8 +108,17 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -1610815252, guid: 829be9ae49938eb49a024e1edf205408, type: 3}
+    - target: {fileID: 8482998749963511735, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+      propertyPath: randomizeAnimation
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+--- !u!212 &6059232854412617456 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4956735187085034711, guid: 6860b823ffd25a34b99db63f9e1abbcd, type: 3}
+  m_PrefabInstance: {fileID: 1215800691478618663}
+  m_PrefabAsset: {fileID: 0}

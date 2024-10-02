@@ -94,11 +94,11 @@ namespace GridPlacement
 
             placeState = new RemoveState(gridData, item);
 
-            Vector2Int gridDetectorValue = ConvertToGridPosition(item.GridDetectorPoint.position);
+            Vector2Int gridDetectorValue = ConvertToGridPosition(item.GetGridDetectorPosition());
 
             var removeResults = placeState.OnAction(gridDetectorValue);
 
-            item.OnGridChanged(removeResults);
+            item.OnGridChanged(!removeResults);
 
             if (!removeResults) return;
 
@@ -145,21 +145,21 @@ namespace GridPlacement
 
         public (Vector2, bool) OnItemMove(Vector2 gridDetectorPosition, int rotationState)
         {
-            Vector3 mouseWorldPosition = GetMouseWorldPosition();
+            Vector3 mouseWorldPosition = GetMouseWorldPosition() + previewSystem.PreviewOffSet;
 
             var rayCastHit = GetRayCastHit(mouseWorldPosition);
 
             if (!IsRayCastHited(rayCastHit))
             {
-                if(previewSystem.IsShow())
+                if(previewSystem.IsShow)
                     previewSystem.HidePreview();
-
+                
                 return (mouseWorldPosition, false);
             }
-
-            if(!previewSystem.IsShow())
+ 
+            if(!previewSystem.IsShow)
                 previewSystem.ShowPreview();
-
+            
             Vector2Int gridValue = ConvertToGridPosition(mouseWorldPosition);
             Vector2Int gridDetectorValue = ConvertToGridPosition(gridDetectorPosition);
 

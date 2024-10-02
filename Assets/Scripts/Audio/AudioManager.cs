@@ -1,6 +1,10 @@
 using Audio.SoundsData;
+using System;
 using UnityEngine;
 using UnityEngine.Audio;
+using Random = UnityEngine.Random;
+using System.Collections;
+using DG.Tweening;
 
 namespace Audio.Manager
 {
@@ -11,7 +15,7 @@ namespace Audio.Manager
         private float masterVolume = 1f;
 
         [SerializeField]
-        private SoundCollectionSO soundCollectionSO;
+        private SoundCollectionSO musicCollectionSO;
 
         [SerializeField]
         private AudioMixer audioMixer;
@@ -23,23 +27,26 @@ namespace Audio.Manager
 
         private AudioSource currentMusic;
 
+        private readonly float musicFader = 5f;
+
         float maxLevel = 0f;
         float minLevel = -80f;
 
         private readonly string musicVolumeKey = "Music";
         private readonly string sfxVolumeKey = "SFX";
 
-        private void PlayRandomSound(SoundSO[] sounds)
+        private IEnumerator WaitForNextMusic(float duration)
         {
-            if (sounds == null || sounds.Length == 0)
-                return;
+            yield return new WaitForSeconds(duration);
 
-            SoundSO soundSO = sounds[Random.Range(0,sounds.Length)];
-            SoundToPlay(soundSO);
+            PlayRandomMusic();
         }
 
         private void SoundToPlay(SoundSO soundDataSO)
         {
+            if (soundDataSO == null)
+                return;
+
             AudioClip clip = soundDataSO.Clip;
             float volume = soundDataSO.Volume * masterVolume;
             float pitch = soundDataSO.Pitch;
@@ -71,29 +78,53 @@ namespace Audio.Manager
             GameObject soundObject = new GameObject("TempAudioSource");
 
             AudioSource audioSource = soundObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
             audioSource.clip = clip;
             audioSource.volume = volume;
             audioSource.pitch = pitch;
             audioSource.loop = loop;
             audioSource.outputAudioMixerGroup = audioMixerGroup;
 
+            if (DeterminMusic(audioMixerGroup, audioSource, volume, clip.length))
+                return;
+
             audioSource.Play();
 
-            if (!loop)
+            if (!loop || !musicMixerGroup)
                 Destroy(soundObject, clip.length);
-
-            DeterminMusic(audioMixerGroup, audioSource);
         }
 
-        private void DeterminMusic(AudioMixerGroup audioMixerGroup, AudioSource audioSource)
+        private bool DeterminMusic(AudioMixerGroup audioMixerGroup, AudioSource audioSource, float volume, float lenght)
         {
-            if (audioMixerGroup == musicMixerGroup)
-            {
-                if (currentMusic != null)
-                    currentMusic.Stop();
+            if (audioMixerGroup != musicMixerGroup)
+                return false;
 
+            if (currentMusic != null)
+                currentMusic.DOFade(0, 1f).OnComplete(() =>
+                {
+                    Destroy(currentMusic.gameObject);
+
+                    currentMusic = audioSource;
+
+                    currentMusic.volume = 0f;
+
+                    currentMusic.Play();
+
+                    currentMusic.DOFade(volume, 1f);
+                });
+            else
+            {
                 currentMusic = audioSource;
+
+                currentMusic.volume = 0f;
+
+                currentMusic.Play();
+
+                currentMusic.DOFade(volume, 1f);
             }
+            StartCoroutine(WaitForNextMusic(lenght - musicFader));
+
+            return true;
         }
 
         private AudioMixerGroup GetAudioMixerGroup(AudioTypes audioType)
@@ -122,6 +153,14 @@ namespace Audio.Manager
             }
         }
 
+        public void PlayRandomMusic()
+        {
+            if (musicCollectionSO == null)
+                return;
+
+            SoundToPlay(musicCollectionSO.GetRandomMusic());
+        }
+
         public bool SetSoundGroupMuted(AudioTypes audioType)
         {
             var key = GetAudioKeyName(audioType);
@@ -132,16 +171,14 @@ namespace Audio.Manager
 
             audioMixer.SetFloat(key, volume);
 
-            return volume == minLevel;
+            return volume != minLevel;
         }
 
-        public void SetSoundGroupMuted(AudioTypes audioType, bool isMuted)
+        public void SetSoundGroupMuted(AudioTypes audioType, bool isOn)
         {
             var key = GetAudioKeyName(audioType);
 
-            float volume = isMuted ? minLevel : maxLevel;
-
-            Debug.Log(volume);
+            float volume = isOn ? maxLevel : minLevel;
 
             audioMixer.SetFloat(key, volume);
         }

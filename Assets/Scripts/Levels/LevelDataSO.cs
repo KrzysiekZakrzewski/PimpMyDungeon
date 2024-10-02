@@ -18,11 +18,17 @@ namespace Levels.Data
         [field: SerializeField]
         public Vector2 CenterPoint { private set; get; }
 
-        [field: SerializeField, HideInInspector]
+        [field: SerializeField]
         public SerializedDictionary<Vector2Int, ObstacleItemData> Obstacles { private set; get; }
 
-        [field: SerializeField, HideInInspector]
+        [field: SerializeField]
         public List<ItemGeneratedData> PlaceableItems { private set; get; }
+
+        [field: SerializeField, HideInInspector]
+        public bool IsOverride { set; get; }
+
+        [field: SerializeField, HideIf("PlaceablePositionOverride", false)]
+        public List<ItemGeneratedDataOverride> PlaceableItemOverride { private set; get; }
 
         public void Init(
             HashSet<Vector2Int> floorPositions,
@@ -50,6 +56,32 @@ namespace Levels.Data
         public void SetupName(string name)
         {
             Name = name;
+        }
+
+        public void GeneratePlaceableItemData()
+        {
+            PlaceableItemOverride = new List<ItemGeneratedDataOverride>();
+
+            for (int i = 0; i < PlaceableItems.Count; i++)
+            {
+                PlaceableItemOverride.Add(new ItemGeneratedDataOverride(PlaceableItems[i]));
+            }
+        }
+    }
+
+    [System.Serializable]
+    public class ItemGeneratedDataOverride
+    {
+        [field: SerializeField]
+        public ItemGeneratedData ItemGeneratedData { private set; get; }
+
+        [field: SerializeField]
+        public Vector2 OverrideSpawnPosition { private set; get; }
+
+        public ItemGeneratedDataOverride(ItemGeneratedData itemGeneratedData)
+        {
+            ItemGeneratedData = itemGeneratedData;
+            OverrideSpawnPosition = Vector2.zero;
         }
     }
 }

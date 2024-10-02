@@ -16,5 +16,8 @@ MonoBehaviour:
   - Simple hint
   - Advance hint
   backgrounds:
-  - {fileID: 21300000, guid: 2d6d87ded7e59f94b851917e757d51e6, type: 3}
-  - {fileID: 21300000, guid: 051c8af1525576b40979f7ed1ca165c9, type: 3}
+  - {fileID: 21300000, guid: d1a81866e14cd68488c34bf40ce6cfe9, type: 3}
+  - {fileID: 21300000, guid: 00ed4e2f6ab03304e9ef9c8e290ba16d, type: 3}
+  - {fileID: 21300000, guid: 95b8240e7759146498e4ed98078b25a7, type: 3}
+  - {fileID: 21300000, guid: 446be5d1b738a0c4b9fb0cedd491eebf, type: 3}
+  - {fileID: 21300000, guid: ea1bd91dcb8241a4387e049c437f2a8b, type: 3}

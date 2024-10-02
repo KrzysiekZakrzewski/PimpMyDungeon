@@ -63,8 +63,10 @@ namespace Generator
 
         public void SpawnObstacle(Vector2Int position, ObstacleItemData obstacle)
         {
-            float x = obstacle.Size.x;
-            float y = obstacle.Size.y;
+            var size = obstacle.CalculateSize();
+
+            float x = size.x;
+            float y = size.y;
 
             var offSet = new Vector3(x / 2, y / 2);
 
@@ -77,8 +79,10 @@ namespace Generator
 
         public Vector2 SpawnPlaceableItem(ItemGeneratedData potentialPosition, PlaceItemData placeItem)
         {
-            float x = placeItem.Size.x;
-            float y = placeItem.Size.y;
+            var size = placeItem.CalculateSize();
+
+            float x = size.x;
+            float y = size.y;
 
             var offSet = new Vector3(x / 2, y / 2);
 

@@ -6,6 +6,8 @@
         public const string LastUnlockedLevelKey = "LastUnlockedLevel";
         public const string MusicSettingsKey = "MusicSettings";
         public const string SFXSettingsKey = "SFXSettings";
-        public const string VibrationSettingsKey = "VibrationSettings";
+        public const string HapticsSettingsKey = "VibrationSettings";
+        public const string TutorialKey = "Tutorials";
+        public const string UnlockedItems = "UnlockedItems";
     }
 }

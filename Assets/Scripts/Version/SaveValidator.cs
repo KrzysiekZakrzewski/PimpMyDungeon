@@ -14,6 +14,8 @@ namespace Saves
 
         private LevelsDatabaseSO levelDatabase;
 
+        public bool InitializeFinished { get; private set; }
+
         [Inject]
         private void Inject(LevelsDatabaseSO levelDatabase)
         {
@@ -86,6 +88,8 @@ namespace Saves
             saveLevelDatabase[0].UnlockLevel();
 
             SaveLevelData();
+
+            InitializeFinished = true;
         }
 
         private void ValidateSaveData()
@@ -95,11 +99,15 @@ namespace Saves
             if (saveLevelDatabase == null || saveLevelDatabase.Count == 0)
             {
                 CreateNewGameSave();
+                InitializeFinished = true;
                 return;
             }
 
             if (saveLevelDatabase.Count == levelDatabase.GetLevelsCount())
+            {
+                InitializeFinished = true;
                 return;
+            }
 
             UpdateSaveData();
         }

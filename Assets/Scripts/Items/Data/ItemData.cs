@@ -10,21 +10,14 @@ namespace Item
         [field: SerializeField]
         public GameObject Prefab { private set; get; }
 
-        private Vector2Int size;
-
-        public Vector2Int Size => size;
-
-        private void OnValidate()
-        {
-            CalculateSize();
-        }
-
         public int GetItemSizeArea()
         {
+            var size = CalculateSize();
+
             return size.x * size.y;
         }
 
-        public void CalculateSize()
+        public Vector2Int CalculateSize()
         {
             var maxX = 0;
             var maxY = 0;
@@ -41,8 +34,10 @@ namespace Item
                 minY = point.y < minY ? point.y : minY;
             }
 
-            size.x = (maxX - minX) + 1;
-            size.y = (maxY - minY) + 1;
+            var x = (maxX - minX) + 1;
+            var y = (maxY - minY) + 1;
+
+            return new Vector2Int(x, y);
         }
     }
 }

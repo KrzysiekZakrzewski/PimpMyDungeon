@@ -1,6 +1,6 @@
 using Levels;
+using Tips;
 using UnityEngine;
-using UnityEngine.UI;
 using ViewSystem;
 using ViewSystem.Implementation;
 using Zenject;
@@ -8,37 +8,33 @@ using Zenject;
 public class PauseView : BasicView
 {
     [SerializeField]
-    private Button resumeButton;
+    private UIButton resumeButton;
     [SerializeField]
-    private Button mainMenuButton;
+    private UIButton mainMenuButton;
     [SerializeField]
-    private Button restartLevelButton;
+    private UIButton restartLevelButton;
+    [SerializeField]
+    private UIButton tipGenerator;
 
     public override bool Absolute => false;
 
     private LevelManager levelManager;
+    private TipManager tipManager;
 
     [Inject]
-    private void Inject(LevelManager levelManager)
+    private void Inject(LevelManager levelManager, TipManager tipManager)
     {
         this.levelManager = levelManager;
+        this.tipManager = tipManager;
     }
 
     protected override void Awake()
     {
         base.Awake();
 
-        resumeButton.onClick.AddListener(OnResumePerformed);
-        mainMenuButton.onClick.AddListener(OnMainMenuPerformed);
-        restartLevelButton.onClick.AddListener(OnRestartLevelPerformed);
-    }
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-
-        resumeButton.onClick.RemoveAllListeners();
-        mainMenuButton.onClick.RemoveAllListeners();
-        restartLevelButton.onClick.RemoveAllListeners();
+        resumeButton.SetupButtonEvent(OnResumePerformed);
+        mainMenuButton.SetupButtonEvent(OnMainMenuPerformed);
+        restartLevelButton.SetupButtonEvent(OnRestartLevelPerformed);
     }
 
     protected override void Presentation_OnHidePresentationComplete(IAmViewPresentation presentation)
@@ -58,13 +54,13 @@ public class PauseView : BasicView
     private void OnResumePerformed()
     {
         ParentStack.TryPopSafe();
-
-        levelManager.LoadNextLevel();
     }
 
     private void OnMainMenuPerformed()
     {
-        ParentStack.TryPopSafe();
+        ParentStack.Pop();
+
+        ParentStack.Pop();
 
         levelManager.BackToMainMenu();
     }

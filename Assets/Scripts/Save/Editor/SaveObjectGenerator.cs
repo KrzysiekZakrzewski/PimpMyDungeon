@@ -1,6 +1,6 @@
 using UnityEditor;
 
-namespace Saves.Editor 
+namespace Saves.Editors
 {
     public class SaveObjectGenerator : EditorWindow
     {

@@ -1,0 +1,151 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1c943fc08a0224d9c8a989596a078c, type: 3}
+  m_Name: Level_85
+  m_EditorClassIdentifier: 
+  <Name>k__BackingField: Level_85
+  <FloorPositions>k__BackingField:
+  - {x: 0, y: 0}
+  - {x: 0, y: -1}
+  - {x: -1, y: -1}
+  - {x: -1, y: 0}
+  - {x: -1, y: 1}
+  - {x: 0, y: -2}
+  - {x: -1, y: -2}
+  - {x: 0, y: -3}
+  - {x: 1, y: -3}
+  - {x: 1, y: -2}
+  - {x: 0, y: -4}
+  - {x: 1, y: -4}
+  - {x: 2, y: -4}
+  - {x: 0, y: -5}
+  - {x: 0, y: -6}
+  - {x: 1, y: -6}
+  - {x: -1, y: -6}
+  - {x: -1, y: -5}
+  - {x: -1, y: -4}
+  - {x: -2, y: -5}
+  - {x: 2, y: -6}
+  - {x: 1, y: -5}
+  - {x: 2, y: -5}
+  - {x: 2, y: -7}
+  - {x: 3, y: -6}
+  - {x: 4, y: -6}
+  - {x: 3, y: -5}
+  - {x: 3, y: -4}
+  - {x: 2, y: -3}
+  - {x: -1, y: -3}
+  - {x: -3, y: -5}
+  - {x: -3, y: -4}
+  - {x: -3, y: -3}
+  - {x: -4, y: -3}
+  - {x: -5, y: -3}
+  - {x: -4, y: -2}
+  - {x: -6, y: -3}
+  - {x: 1, y: -1}
+  - {x: 1, y: 0}
+  - {x: 1, y: 1}
+  - {x: 2, y: 0}
+  - {x: 3, y: 0}
+  - {x: 3, y: 1}
+  - {x: 4, y: 1}
+  - {x: 4, y: 0}
+  - {x: 4, y: -1}
+  - {x: 4, y: 2}
+  - {x: -2, y: -3}
+  - {x: -2, y: -4}
+  - {x: -2, y: -2}
+  - {x: -2, y: -1}
+  - {x: -3, y: -1}
+  - {x: -4, y: -1}
+  - {x: -5, y: -1}
+  - {x: 4, y: -4}
+  - {x: 3, y: -3}
+  <CenterPoint>k__BackingField: {x: -0.5, y: -2}
+  <Obstacles>k__BackingField:
+    pairs:
+    - key: {x: -3, y: -5}
+      value: {fileID: 11400000, guid: 8df3a9891fb291c4081ee035eda34cef, type: 2}
+    - key: {x: 3, y: -6}
+      value: {fileID: 11400000, guid: 14cfb923b24894e44951b701518f3699, type: 2}
+    - key: {x: -5, y: -1}
+      value: {fileID: 11400000, guid: 14cfb923b24894e44951b701518f3699, type: 2}
+    - key: {x: -1, y: -6}
+      value: {fileID: 11400000, guid: 14cfb923b24894e44951b701518f3699, type: 2}
+    - key: {x: 3, y: -4}
+      value: {fileID: 11400000, guid: dcaa097136ca1cb4dbbacd004a558834, type: 2}
+    - key: {x: -2, y: -3}
+      value: {fileID: 11400000, guid: dcaa097136ca1cb4dbbacd004a558834, type: 2}
+    - key: {x: 1, y: -2}
+      value: {fileID: 11400000, guid: 89b893a838c5321489dcdc8f0128ffe9, type: 2}
+    - key: {x: 1, y: 1}
+      value: {fileID: 11400000, guid: 89b893a838c5321489dcdc8f0128ffe9, type: 2}
+    - key: {x: 4, y: 2}
+      value: {fileID: 11400000, guid: 89b893a838c5321489dcdc8f0128ffe9, type: 2}
+    - key: {x: -4, y: -2}
+      value: {fileID: 11400000, guid: 89b893a838c5321489dcdc8f0128ffe9, type: 2}
+    - key: {x: -1, y: 1}
+      value: {fileID: 11400000, guid: 89b893a838c5321489dcdc8f0128ffe9, type: 2}
+    - key: {x: -6, y: -3}
+      value: {fileID: 11400000, guid: 89b893a838c5321489dcdc8f0128ffe9, type: 2}
+    - key: {x: 2, y: -5}
+      value: {fileID: 11400000, guid: 89b893a838c5321489dcdc8f0128ffe9, type: 2}
+    - key: {x: 3, y: 1}
+      value: {fileID: 11400000, guid: 89b893a838c5321489dcdc8f0128ffe9, type: 2}
+    - key: {x: 2, y: -7}
+      value: {fileID: 11400000, guid: 89b893a838c5321489dcdc8f0128ffe9, type: 2}
+    - key: {x: 0, y: -5}
+      value: {fileID: 11400000, guid: 89b893a838c5321489dcdc8f0128ffe9, type: 2}
+    error: 0
+  <PlaceableItems>k__BackingField:
+  - <RotationID>k__BackingField: 2
+    <OriginPosition>k__BackingField: {x: 0, y: -3}
+    <SpawnPosition>k__BackingField: {x: -0.5, y: -3.5}
+    <PlaceItemData>k__BackingField: {fileID: 11400000, guid: fb6d70f635fd1f94d8d463d089ec8650, type: 2}
+  - <RotationID>k__BackingField: 0
+    <OriginPosition>k__BackingField: {x: 2, y: -6}
+    <SpawnPosition>k__BackingField: {x: 3.5, y: -4.5}
+    <PlaceItemData>k__BackingField: {fileID: 11400000, guid: 81fc5ade9e03806409055fbb9570c1ae, type: 2}
+  - <RotationID>k__BackingField: 1
+    <OriginPosition>k__BackingField: {x: -1, y: 0}
+    <SpawnPosition>k__BackingField: {x: 0.5, y: -0.5}
+    <PlaceItemData>k__BackingField: {fileID: 11400000, guid: 4c5cc67a0a7b98b41a43c71528021e24, type: 2}
+  - <RotationID>k__BackingField: 1
+    <OriginPosition>k__BackingField: {x: 1, y: -3}
+    <SpawnPosition>k__BackingField: {x: 2, y: -3}
+    <PlaceItemData>k__BackingField: {fileID: 11400000, guid: 336cf844449be1c4fade42c8c3909f8f, type: 2}
+  - <RotationID>k__BackingField: 3
+    <OriginPosition>k__BackingField: {x: -1, y: -1}
+    <SpawnPosition>k__BackingField: {x: -1.5, y: -0.5}
+    <PlaceItemData>k__BackingField: {fileID: 11400000, guid: 68bcba7b4bd6ef642ad04140642fa265, type: 2}
+  - <RotationID>k__BackingField: 3
+    <OriginPosition>k__BackingField: {x: 4, y: 0}
+    <SpawnPosition>k__BackingField: {x: 3.5, y: 0.5}
+    <PlaceItemData>k__BackingField: {fileID: 11400000, guid: 68bcba7b4bd6ef642ad04140642fa265, type: 2}
+  - <RotationID>k__BackingField: 2
+    <OriginPosition>k__BackingField: {x: 1, y: -5}
+    <SpawnPosition>k__BackingField: {x: 1.5, y: -5}
+    <PlaceItemData>k__BackingField: {fileID: 11400000, guid: 0099038154f7b004aaac26c7160f6959, type: 2}
+  - <RotationID>k__BackingField: 1
+    <OriginPosition>k__BackingField: {x: -5, y: -3}
+    <SpawnPosition>k__BackingField: {x: -4, y: -2.5}
+    <PlaceItemData>k__BackingField: {fileID: 11400000, guid: 0099038154f7b004aaac26c7160f6959, type: 2}
+  - <RotationID>k__BackingField: 1
+    <OriginPosition>k__BackingField: {x: 4, y: -1}
+    <SpawnPosition>k__BackingField: {x: 4.5, y: -0.5}
+    <PlaceItemData>k__BackingField: {fileID: 11400000, guid: 0324bde28dc758e44a380c3f9b881977, type: 2}
+  - <RotationID>k__BackingField: 0
+    <OriginPosition>k__BackingField: {x: 4, y: 1}
+    <SpawnPosition>k__BackingField: {x: 4.5, y: 1.5}
+    <PlaceItemData>k__BackingField: {fileID: 11400000, guid: 0324bde28dc758e44a380c3f9b881977, type: 2}
+  <IsOverride>k__BackingField: 0
+  <PlaceableItemOverride>k__BackingField: []

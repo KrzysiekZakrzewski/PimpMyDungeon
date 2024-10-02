@@ -1,15 +1,16 @@
-﻿using Extensions;
+﻿using Audio.Manager;
+using DG.Tweening;
+using Extensions;
 using Generator.Data;
 using GridPlacement;
-using Inputs;
 using Item;
+using Item.Guide;
 using Levels.Data;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 using Zenject;
 
@@ -22,13 +23,13 @@ namespace Generator
 
         private LevelDataSO levelDataSO;
 
-        private readonly float extraBound = 0.2f;
-        private readonly float baseWaitBuilder = 0.2f;
-        private float waitBuilder = 0.1f;
+        private readonly float extraBound = 0.5f;
 
-        private bool skiped;
-        private bool isHolding;
-        private float holdDuration = 2f;
+        private readonly float waitDuration = 0.1f;
+
+        private Vector3 screenSizeOffset = new(3f, 3f);
+        private Vector2 screenSizeAdder = new(0.05f, 0.05f);
+        private float percentOffsetMultiply = 0.95f;
 
         private HashSet<Vector2Int> floorInHash;
         private HashSet<Vector2Int> obstaclesInHash;
@@ -36,25 +37,26 @@ namespace Generator
         private Camera currentCamera;
         private GridData gridData;
         private PlacementSystem placementSystem;
+        private ItemGuideController itemGuide;
+        private AudioManager audioManager;
         private Tilemap floorTilemap, wallTilemap;
-        private Transform obstacleMagazine, itemMagazine;
+        private Transform obstacleMagazine, itemMagazine, tipObjectsMagazine;
+        private SpriteRenderer backgroundRenderer;
+        private List<PlaceableItem> placeableItems;
 
-        [NonSerialized]
-        private Inputs.PlayerInput playerInput;
+        private bool squareTipIsPlaying;
 
-        public static event Action<float> HeldUpdateAction;
-        public static event Action StartHoldAction;
-        public static event Action EndHoldAction;
+        private RectTransform[] rectsToIgnore;
+        private Bounds[] boundsToIgnore;
+
+        public Transform TipObjectsMagazine => tipObjectsMagazine;
 
         [Inject]
-        private void Inject(PlacementSystem placementSystem)
+        private void Inject(PlacementSystem placementSystem, AudioManager audioManager, ItemGuideController itemGuide)
         {
             this.placementSystem = placementSystem;
-        }
-
-        private void Start()
-        {
-            playerInput = InputManager.GetPlayer(0);
+            this.audioManager = audioManager;
+            this.itemGuide = itemGuide;
         }
 
         private void ClearObjectives()
@@ -62,6 +64,29 @@ namespace Generator
             objectsBounds = new List<Bounds>();
 
             objectsBounds.Clear();
+        }
+
+        private void OnOffSquareVisualizer(bool onOff)
+        {
+            foreach (PlaceableItem item in placeableItems)
+            {
+                item.OnOffSquareVisualize(onOff);
+            }
+        }
+
+        private IEnumerator ShowTipSquareSequance()
+        {
+            squareTipIsPlaying = true;
+
+            OnOffSquareVisualizer(true);
+
+            yield return new WaitForSeconds(2f);
+
+            OnOffSquareVisualizer(false);
+
+            yield return new WaitForSeconds(1f);
+
+            squareTipIsPlaying = false;
         }
 
         private void SetCameraPosition()
@@ -72,6 +97,8 @@ namespace Generator
                 currentCamera.transform.position.z);
 
             currentCamera.transform.position = cameraPosition;
+
+            backgroundRenderer.transform.position = new Vector3(cameraPosition.x, cameraPosition.y, 0);
         }
 
         private void PaintSingleBasicWall(Vector2Int position, string binaryType)
@@ -151,26 +178,47 @@ namespace Generator
             tilemap.SetTile(tilePosition, tile);
         }
 
-        private bool IsOccupiedPosition(Vector2 position)
+        private bool IsOccupiedPosition(Vector2 position, Vector3 size)
         {
             foreach(Bounds bound in objectsBounds)
             {
-                if(bound.Contains(position))
+                Bounds bounds = new Bounds(bound.center, bound.size + size);
+
+                if (bounds.Contains(position))
                     return true;
             }
 
             return false;
         }
 
-        private Vector2 CalculatePositionForItem(Bounds objectsArea, Vector2Int size)
+        private bool IsOverUI(Bounds[] bounds, Vector2 position)
+        {
+            for (int i = 0; i < bounds.Length; i++)
+            {
+                if (bounds[i].Contains(position))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private Vector2 CalculatePositionForItem(Vector2Int size)
         {
             bool succesfull = false;
 
-            Vector3Int offSetSize = new(size.x, size.y);
+            Vector3 offSetSize = new((float)size.x * percentOffsetMultiply, (float)size.y * percentOffsetMultiply);
 
+            Bounds objectsArea = CalculateObjectsArea(offSetSize);
             Bounds levelBounds = new(wallTilemap.cellBounds.center, wallTilemap.cellBounds.size + offSetSize);
 
             Vector2 position = Vector2.zero;
+
+            Bounds[] uiIgnore = new Bounds[boundsToIgnore.Length];
+
+            for(int i = 0; i < boundsToIgnore.Length; i++)
+            {
+                uiIgnore[i] = new Bounds(boundsToIgnore[i].center, boundsToIgnore[i].size + offSetSize);
+            }
 
             while (!succesfull)
             {
@@ -178,7 +226,9 @@ namespace Generator
 
                 bool inLevelBounds = levelBounds.Contains(position);
 
-                succesfull = !inLevelBounds && !IsOccupiedPosition(position);
+                bool isOverUI = IsOverUI(uiIgnore, position);
+
+                succesfull = !inLevelBounds && !isOverUI && !IsOccupiedPosition(position, offSetSize);
             }
 
             Bounds objectBound = new(position, new Vector3(size.x + extraBound, size.y + extraBound, 0));
@@ -188,127 +238,166 @@ namespace Generator
             return position;
         }
 
-        private void ResizeCamera(Bounds objectsArea)
+        private void ResizeCamera()
         {
-            var orthographicSize = objectsArea.size.x * Screen.height / Screen.width * 0.75f;
+            Vector3 size = wallTilemap.cellBounds.size + screenSizeOffset;
 
-            currentCamera.orthographicSize = orthographicSize;
-        }
+            float screenRatio = (float)Screen.width / (float)Screen.height;
+            float targetRatio = size.x / size.y;
 
-        private void Clear()
-        {
-            floorTilemap.ClearAllTiles();
-            wallTilemap.ClearAllTiles();
-
-            for (int i = obstacleMagazine.childCount - 1; i >= 0 ; i--)
+            if (screenRatio >= targetRatio)
+                currentCamera.orthographicSize = size.y / 2;
+            else
             {
-                var obstacle = obstacleMagazine.GetChild(i);
-
-                Destroy(obstacle.gameObject);
+                float differenceInSize = targetRatio / screenRatio;
+                currentCamera.orthographicSize = size.y / 2 * differenceInSize;
             }
 
-            for (int i = itemMagazine.childCount - 1; i >= 0; i--)
-            {
-                var item = itemMagazine.GetChild(i);
+            ResizeBackground(currentCamera.orthographicSize);
+        }
 
-                Destroy(item.gameObject);
+        private void ResizeCamera(float orthographicSize)
+        {
+            ResizeBackground(orthographicSize);
+
+            currentCamera.DOOrthoSize(orthographicSize, 1f);
+        }
+
+        private void ResizeBackground()
+        {
+            backgroundRenderer.transform.DOScale(CalculateBackgroundSize(), 0.5f);
+        }
+
+        private void ResizeBackground(float orthographicSize)
+        {
+            backgroundRenderer.transform.localScale = CalculateBackgroundSize(orthographicSize);
+        }
+
+        private Bounds CalculateObjectsArea(Vector3 offSetSize)
+        {
+            float worldScreenHeight = currentCamera.orthographicSize * 2f;
+            float worldScreenWidth = worldScreenHeight / Screen.safeArea.height * Screen.safeArea.width;
+
+            Vector3 size = new Vector3(worldScreenWidth, worldScreenHeight) - (offSetSize * 1.5f);
+
+            return new Bounds(backgroundRenderer.bounds.center, size);
+        }
+
+        private void CalculateRectIgnoreBounds()
+        {
+            if(rectsToIgnore == null)
+                rectsToIgnore = new RectTransform[0];
+
+            boundsToIgnore = new Bounds[rectsToIgnore.Length];
+
+            for (int i = 0; i < rectsToIgnore.Length; i++)
+            {
+                boundsToIgnore[i] = CalculateSingleRectIgnoreBound(rectsToIgnore[i]);
             }
         }
 
-        private void Skip(InputAction.CallbackContext callbackContext)
+        private Bounds CalculateSingleRectIgnoreBound(RectTransform rect)
         {
-            if (skiped)
-                return;
+            Vector3 rightUp = currentCamera.ScreenToWorldPoint(rect.position + new Vector3(rect.sizeDelta.x / 2, rect.sizeDelta.y / 2));
+            Vector3 leftDown = currentCamera.ScreenToWorldPoint(rect.position - new Vector3(rect.sizeDelta.x / 2, rect.sizeDelta.y / 2));
 
-            skiped = true;
-            isHolding = false;
+            float h = Mathf.Abs(rightUp.y) - Mathf.Abs(leftDown.y);
+            float w = Mathf.Abs(rightUp.x) - Mathf.Abs(leftDown.x);
 
-            waitBuilder = 0f;
+            Vector3 size = new(Mathf.Abs(h), Mathf.Abs(w), wallTilemap.cellBounds.size.z);
 
-            EndHoldAction?.Invoke();
+            Vector3 rectPointInWorld = currentCamera.ScreenToWorldPoint(rect.position);
+
+            Vector3 center = new(rectPointInWorld.x, rectPointInWorld.y, wallTilemap.cellBounds.center.z);
+
+            return new Bounds(center, size);
         }
 
-        private void PrepeareToSkip(InputAction.CallbackContext callbackContext)
+        private Vector3 CalculateBackgroundSize()
         {
-            isHolding = true;
+            if (backgroundRenderer == null) 
+                return Vector2.one;
 
-            StartHoldAction?.Invoke();
+            float worldScreenHeight = currentCamera.orthographicSize * 2f;
+            float worldScreenWidth = worldScreenHeight / Screen.height * Screen.width;
 
-            StartCoroutine(HoldUpdate());
+            var spriteSize = backgroundRenderer.sprite.bounds.size;
+            Vector2 scale = Vector2.one;
+            scale.x = worldScreenWidth / spriteSize.x;
+            scale.y = worldScreenHeight / spriteSize.y;
+
+            return scale + screenSizeAdder;
         }
-        private void ResetSkip(InputAction.CallbackContext callbackContext)
+
+        private Vector3 CalculateBackgroundSize(float orthographicSize)
         {
-            isHolding = false;
+            if (backgroundRenderer == null)
+                return Vector2.one;
 
-            EndHoldAction?.Invoke();
-        }
+            float worldScreenHeight = orthographicSize * 2f;
+            float worldScreenWidth = worldScreenHeight / Screen.height * Screen.width;
 
-        private IEnumerator HoldUpdate()
-        {
-            var holdTime = 0f;
+            var spriteSize = backgroundRenderer.sprite.bounds.size;
+            Vector2 scale = Vector2.one;
+            scale.x = worldScreenWidth / spriteSize.x;
+            scale.y = worldScreenHeight / spriteSize.y;
 
-            while (isHolding)
-            {
-                yield return null;
-
-                holdTime += Time.deltaTime;
-
-                var value = holdTime / holdDuration;
-
-                HeldUpdateAction?.Invoke(value);
-            }
+            return scale + screenSizeAdder;
         }
 
         private bool CheckReferences()
         {
-            return floorTilemap != null && wallTilemap != null && currentCamera != null;
+            return floorTilemap != null && wallTilemap != null;
         }
 
         #region Sequences
 
-        private IEnumerator BuildlevelSequence()
+        private IEnumerator BuildlevelSequence(Action finishedEvent)
         {
             floorInHash = new HashSet<Vector2Int>(levelDataSO.FloorPositions);
 
-            waitBuilder = baseWaitBuilder;
-
             StartCoroutine(GetCameraSequnce());
+
+            yield return new WaitUntil(() => currentCamera != null);
+
+            SetCameraPosition();
 
             yield return new WaitUntil(CheckReferences);
 
             Clear();
 
-            skiped = false;
+            PaintWalls();
+            PaintFloor();
 
-            yield return StartCoroutine(PaintWalls());
-            yield return StartCoroutine(PaintFloor());
+            ResizeCamera();
+
+            CalculateRectIgnoreBounds();
+
             yield return StartCoroutine(SpawnObstacles());
             yield return StartCoroutine(SpawnPlaceableItem());
 
             gridData = new GridData(floorInHash, obstaclesInHash);
             placementSystem.SetupGridData(gridData);
 
-            playerInput.RemoveInputEventDelegate(Skip);
-            playerInput.RemoveInputEventDelegate(PrepeareToSkip);
-            playerInput.RemoveInputEventDelegate(ResetSkip);
+            finishedEvent?.Invoke();
         }
 
-        private IEnumerator PaintFloor()
+        private void PaintFloor()
         {
-            yield return StartCoroutine(PaintFloorTiles(floorInHash, floorTilemap, database.FloorTile));
+            PaintFloorTiles(floorInHash, floorTilemap, database.FloorTile);
         }
 
-        private IEnumerator PaintWalls()
+        private void PaintWalls()
         {
             var basicWallPositions = WallGenerator.FindWallsInDirections(floorInHash, Direction2D.cardinalDirectionsList);
             var cornerWallPositions = WallGenerator.FindWallsInDirections(floorInHash, Direction2D.diagonalDirectionsList);
 
-            StartCoroutine(CreateBasicWall(basicWallPositions));
+            CreateBasicWall(basicWallPositions);
 
-            yield return StartCoroutine(CreateCornerWalls(cornerWallPositions));
+            CreateCornerWalls(cornerWallPositions);
         }
 
-        private IEnumerator CreateCornerWalls(HashSet<Vector2Int> cornerWallPositions)
+        private void CreateCornerWalls(HashSet<Vector2Int> cornerWallPositions)
         {
             foreach (var position in cornerWallPositions)
             {
@@ -326,14 +415,10 @@ namespace Generator
                     }
                 }
                 PaintSingleCornerWall(position, neighboursBinaryType);
-
-                
-
-                yield return new WaitForSeconds(waitBuilder);
             }
         }
 
-        private IEnumerator CreateBasicWall(HashSet<Vector2Int> basicWallPositions)
+        private void CreateBasicWall(HashSet<Vector2Int> basicWallPositions)
         {
             foreach (var position in basicWallPositions)
             {
@@ -351,20 +436,14 @@ namespace Generator
                     }
                 }
                 PaintSingleBasicWall(position, neighboursBinaryType);
-
-                yield return new WaitForSeconds(waitBuilder);
             }
         }
 
-        private IEnumerator PaintFloorTiles(IEnumerable<Vector2Int> positions, Tilemap tilemap, TileBase tile)
+        private void PaintFloorTiles(IEnumerable<Vector2Int> positions, Tilemap tilemap, TileBase tile)
         {
             foreach (var position in positions)
             {
                 PaintSingleTile(tilemap, tile, position);
-
-
-
-                yield return new WaitForSeconds(waitBuilder);
             }
         }
 
@@ -374,6 +453,9 @@ namespace Generator
 
             var obstacles = levelDataSO.Obstacles;
 
+            if (levelDataSO.Obstacles.Count == 0)
+                yield break;
+
             var arrayOfAllKeys = obstacles.Keys.ToArray();
             var arrayOfAllValues = obstacles.Values.ToArray();
 
@@ -381,41 +463,50 @@ namespace Generator
             {
                 var obstacleData = arrayOfAllValues[i];
 
-                var offSet = new Vector3((float)obstacleData.Size.x / 2, (float)obstacleData.Size.y / 2);
+                var size = obstacleData.CalculateSize();
+
+                var offSet = new Vector3((float)size.x / 2, (float)size.y / 2);
 
                 Vector3 spawnPosition = new Vector3(arrayOfAllKeys[i].x, arrayOfAllKeys[i].y) + offSet;
 
                 Instantiate(obstacleData.Prefab, spawnPosition, Quaternion.identity, obstacleMagazine);
 
                 for (int j = 0; j < obstacleData.ItemPoints.Count; j++)
-                {
                     obstaclesInHash.Add(arrayOfAllKeys[i] + obstacleData.ItemPoints[j]);
-                }
 
-                yield return new WaitForSeconds(waitBuilder);
+                yield return new WaitForSeconds(waitDuration);
             }
         }
 
         private IEnumerator SpawnPlaceableItem()
         {
-            Vector3Int levelResize = new(wallTilemap.cellBounds.size.x / 2, 0);
+            placeableItems = new();
 
-            Bounds objectsArea = new(wallTilemap.cellBounds.center, wallTilemap.cellBounds.size + levelResize);
-
-            foreach (var item in levelDataSO.PlaceableItems)
+            for (int i = 0; i < levelDataSO.PlaceableItems.Count; i++)
             {
-                var position = CalculatePositionForItem(objectsArea, item.PlaceItemData.Size);
+                var item = levelDataSO.PlaceableItems[i];
+
+                var size = item.PlaceItemData.CalculateSize();
+
+                var position = levelDataSO.IsOverride
+                    ? levelDataSO.PlaceableItemOverride[i].OverrideSpawnPosition
+                    : CalculatePositionForItem(size);
 
                 var newObject = Instantiate(item.PlaceItemData.Prefab, position, Quaternion.identity, itemMagazine);
 
                 var newItem = newObject.GetComponent<PlaceableItem>();
 
-                newItem.Setup(item.PlaceItemData, placementSystem, position);
+                newItem.Setup(item.PlaceItemData, placementSystem, audioManager, position);
 
-                yield return new WaitForSeconds(waitBuilder);
+                placeableItems.Add(newItem);
+
+                yield return new WaitForSeconds(waitDuration);
+
+                if (levelDataSO.IsOverride)
+                    continue;
+
+                itemGuide.TryUnlockItem(item.PlaceItemData.Id);
             }
-
-            ResizeCamera(objectsArea);
         }
 
         private IEnumerator GetCameraSequnce()
@@ -426,31 +517,89 @@ namespace Generator
 
                 yield return null;
             }
-
-            SetCameraPosition();
         }
 
         #endregion
 
-        public void BuildLevel(LevelDataSO levelDataSO)
+        public void ToMainMenuClear()
+        {
+            StopAllCoroutines();
+
+            Clear();
+        }
+
+        public void Clear()
+        {
+            floorTilemap.ClearAllTiles();
+            wallTilemap.ClearAllTiles();
+
+            for (int i = obstacleMagazine.childCount - 1; i >= 0; i--)
+            {
+                var obstacle = obstacleMagazine.GetChild(i);
+
+                Destroy(obstacle.gameObject);
+            }
+
+            for (int i = itemMagazine.childCount - 1; i >= 0; i--)
+            {
+                var item = itemMagazine.GetChild(i);
+
+                Destroy(item.gameObject);
+            }
+        }
+
+        public void BuildLevel(LevelDataSO levelDataSO, Action finishedEvent = null)
         {
             this.levelDataSO = levelDataSO;
 
             ClearObjectives();
 
-            StartCoroutine(BuildlevelSequence());
-
-            playerInput.AddInputEventDelegate(PrepeareToSkip, InputActionEventType.ButtonStarted, InputUtilities.Skip);
-            playerInput.AddInputEventDelegate(ResetSkip, InputActionEventType.ButtonUp, InputUtilities.Skip);
-            playerInput.AddInputEventDelegate(Skip, InputActionEventType.ButtonPressed, InputUtilities.Skip);
+            StartCoroutine(BuildlevelSequence(finishedEvent));
         }
 
-        public void SetupBuildReferences(Tilemap floorTilemap, Tilemap wallTilemap, Transform obstacleMagazine, Transform itemMagazine)
+        public void SetupBuildReferences(Tilemap floorTilemap, Tilemap wallTilemap, Transform obstacleMagazine, Transform itemMagazine, Transform tipObjectsMagazine, SpriteRenderer backgroundRenderer)
         {
             this.floorTilemap = floorTilemap;
             this.wallTilemap = wallTilemap;
             this.obstacleMagazine = obstacleMagazine;
             this.itemMagazine = itemMagazine;
+            this.backgroundRenderer = backgroundRenderer;
+            this.tipObjectsMagazine = tipObjectsMagazine;
         }
+
+        public PlaceableItem GetItemByData(ItemData itemData)
+        {
+            return placeableItems.Find(x => x.IsSame(itemData));
+        }
+
+        public void ChangeItemInteractable(ItemData itemData, bool isInteractable)
+        {
+            var item = GetItemByData(itemData);
+
+            item.ChangeInteractableState(isInteractable);
+        }
+
+        public void OffAllItemInteractable()
+        {
+            for (int i = 0; i < placeableItems.Count; i++)
+            {
+                placeableItems[i].ChangeInteractableState(false);
+            }
+        }
+
+        public void SetRects(RectTransform[] rectsToIgnore)
+        {
+            this.rectsToIgnore = rectsToIgnore;
+        }
+
+        public void ShowTipSquare()
+        {
+            if (squareTipIsPlaying)
+                return;
+
+            StartCoroutine(ShowTipSquareSequance());
+        }
+
+        public List<ItemGeneratedData> LevelItems => levelDataSO.PlaceableItems;
     } 
 }

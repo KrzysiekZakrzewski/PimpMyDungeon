@@ -24,3 +24,8 @@ MonoBehaviour:
   - {x: 3, y: 1}
   - {x: 3, y: 2}
   <Prefab>k__BackingField: {fileID: 1337929833816916045, guid: 7ae4941a00498d54cb8f10121308d594, type: 3}
+  <Id>k__BackingField: 8
+  <ItemName>k__BackingField: Gear
+  <ItemDescription>k__BackingField: 
+  <ItemIcon>k__BackingField: {fileID: 21300000, guid: cd5d47dc9b147034381549a48f95dcf3, type: 3}
+  <ItemSizeIcon>k__BackingField: {fileID: 21300000, guid: dbe341fd1f4c96b4187b991013ae3337, type: 3}

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2412327330092332617}
   - component: {fileID: 1396980017910015226}
   - component: {fileID: 3823481571540843036}
+  - component: {fileID: 5070264800168371540}
   m_Layer: 0
   m_Name: Skull 2x2
   m_TagString: Untagged
@@ -53,7 +54,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: bb1ba1738f26a2a49a0584ad06499d6a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -72,9 +73,9 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 77197299
-  m_SortingLayer: 2
+  m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 6571e9c0e9b86c541bf6ca8881cbf40c, type: 3}
+  m_Sprite: {fileID: 1994280343, guid: a1bb06d4bdf3c0c489deb710f9e05826, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -106,3 +107,17 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5070264800168371540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6658270817828319880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b3b273dfd4a4ef499222e43aa9ccfa2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onlyOneAnimationLoop: 1
+  randomizeAnimation: 0
